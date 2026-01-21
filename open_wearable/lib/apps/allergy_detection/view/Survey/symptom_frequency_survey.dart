@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
-import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/likert_choice.dart';
 
+class SymptomFrequencySurvey extends StatefulWidget {
 
-class SymptomsSurveyView extends StatefulWidget {
-
-  const SymptomsSurveyView({super.key});
+  const SymptomFrequencySurvey({super.key});
 
   @override
-  State<SymptomsSurveyView> createState() => _SymptomsSurveyViewState();
+  State<SymptomFrequencySurvey> createState() => _SymptomFrequencySurveyState();
 }
 
-class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
+class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   
-
   Map<String, Widget> likertWidgets = {};
 
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      appBar: PlatformAppBar(title: PlatformText("Symptoms Survey"),),
+      appBar: PlatformAppBar(title: PlatformText("You experience this symptom frequently"),),
       body: Column(
         children: [
-          _build_known_Symptoms(),
+          _build_frequence_Symptoms(),
           Padding(
             padding: EdgeInsetsGeometry.fromLTRB(50, 20, 0, 5),
             child: ElevatedButton(onPressed: _submit_survey, child: const Text('Submit')),
@@ -35,12 +32,12 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
     );
   }
 
-  Widget _build_known_Symptoms(){
+  Widget _build_frequence_Symptoms(){
 
     List<Widget> survey = [];
 
     for (int i = 0; i < SYMPTOM_SET.length; i++){
-      survey.add(Text("You experience ${SYMPTOM_SET.elementAt(i).name} frequently.(${SYMPTOM_SET.elementAt(i).description})"));
+      survey.add(Text("${SYMPTOM_SET.elementAt(i).name}(${SYMPTOM_SET.elementAt(i).description})"));
       LikertChoice symptomWidget = LikertChoice();
       survey.add(symptomWidget);
       likertWidgets[SYMPTOM_SET.elementAt(i).name] = symptomWidget;

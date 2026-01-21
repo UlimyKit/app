@@ -9,3 +9,4 @@ class Symptom {
     required this.reactions,
 });
 }
+
