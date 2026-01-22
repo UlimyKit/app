@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
 
-class SurveyView extends StatefulWidget{
-  SurveyView({super.key});
+class LoginView extends StatefulWidget{
+  const LoginView({super.key});
 
   @override
-  State<SurveyView> createState() => _SurveyViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _SurveyViewState extends State<SurveyView> {
+class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,6 @@ class _SurveyViewState extends State<SurveyView> {
   }
 
   void _continue_button_pressed(){
-
+    context.go('/symptomKnowledgeSurvey');
   }
 }
