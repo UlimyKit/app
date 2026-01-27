@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/likert_choice.dart';
@@ -39,11 +40,11 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
 
     List<Widget> survey = [];
 
-    for (int i = 0; i < SYMPTOM_SET.length; i++){
-      survey.add(Text("You experience ${SYMPTOM_SET.elementAt(i).name} frequently.(${SYMPTOM_SET.elementAt(i).description})"));
+    for (int i = 0; i < 5; i++){
+      survey.add(Text("Symptom${i}(Description fo symptom ${i})"));
       LikertChoice symptomWidget = LikertChoice();
       survey.add(symptomWidget);
-      likertWidgets[SYMPTOM_SET.elementAt(i).name] = symptomWidget;
+      likertWidgets["${i}"] = symptomWidget;
     }
 
     return Column(
