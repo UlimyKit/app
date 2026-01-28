@@ -31,7 +31,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(20, 30, 5, 0),
-            child: ElevatedButton(onPressed: _continue_button_pressed, child: const Text("Continue")),
+            child: ElevatedButton(onPressed: _continueButtonPressed, child: const Text("Continue")),
           ),
         ],
       ),
@@ -42,7 +42,7 @@ class _LoginViewState extends State<LoginView> {
     
   }
 
-  void _continue_button_pressed(){
-    context.go('/symptomKnowledgeSurvey');
+  void _continueButtonPressed(){
+    Navigator.pushReplacementNamed(context, '/symptomKnowledgeSurvey');
   }
 }

@@ -18,22 +18,24 @@ class _SessionPageState extends State<SessionPage> {
       appBar: AppBar(title: Text("SessionPage"),),
       body: Column(
         children: [
-          ListView.builder(
-            itemCount: detectedSymptoms.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                leading: Icon(Icons.loupe),
-                title: Text(detectedSymptoms[index]),
-                trailing: Row(
-                  children: <Widget>[
-                    ElevatedButton(onPressed: () => _symptomAddButton(index), child: Icon(Icons.check)),
-                    ElevatedButton(onPressed: () => _symptomEditButton(index), child: Icon(Icons.edit)),
-                    ElevatedButton(onPressed: () => _symptomWrongButton(index), child: Icon(Icons.close)),
-                  ],
-                ),
-              );
-            }
-
+          SizedBox(
+            height: 200,
+            child: ListView.builder(
+              itemCount: detectedSymptoms.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  leading: Icon(Icons.loupe),
+                  title: Text(detectedSymptoms[index]),
+                  trailing: Row(
+                    children: <Widget>[
+                      ElevatedButton(onPressed: () => _symptomAddButton(index), child: Icon(Icons.check)),
+                      ElevatedButton(onPressed: () => _symptomEditButton(index), child: Icon(Icons.edit)),
+                      ElevatedButton(onPressed: () => _symptomWrongButton(index), child: Icon(Icons.close)),
+                    ],
+                  ),
+                );
+              }
+            ),
           ),
           Row(
             children: [
@@ -73,5 +75,6 @@ class _SessionPageState extends State<SessionPage> {
     setState(() {
       recording = !recording;
     });
+    
   }
 }

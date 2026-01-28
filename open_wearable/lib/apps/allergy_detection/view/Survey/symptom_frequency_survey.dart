@@ -51,7 +51,7 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   }
 
   void _submit_survey() {
-    context.go('/symptomFrequencySurvey');
+    Navigator.pushReplacementNamed(context, '/currentSymptomSurvey');
   }
 
 }

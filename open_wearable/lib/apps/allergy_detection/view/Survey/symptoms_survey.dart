@@ -54,7 +54,7 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   }
 
   void _submit_survey() {
-
+    Navigator.pushReplacementNamed(context, '/symptomFrequencySurvey');
   }
 
 }
