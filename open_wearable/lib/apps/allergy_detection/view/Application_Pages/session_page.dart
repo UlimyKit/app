@@ -11,6 +11,8 @@ class SessionPage extends StatefulWidget {
 class _SessionPageState extends State<SessionPage> {
   List<String> detectedSymptoms = <String>["Example_symptom"];
   bool recording = false;
+  var stopwatch = Stopwatch();
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +49,9 @@ class _SessionPageState extends State<SessionPage> {
           Padding(padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(onPressed: _pressedPlayButton, child: recording?Icon(Icons.play_arrow):Icon(Icons.pause))
+            children: <Widget>[
+              ElevatedButton(onPressed: _pressedPlayButton, child: recording?Icon(Icons.play_arrow):Icon(Icons.pause)),
+              ElevatedButton(onPressed: _pressedAddNewSymptomButton, child: Icon(Icons.add))
             ],
           ))
         ],
@@ -95,8 +98,8 @@ class _SessionPageState extends State<SessionPage> {
     });
   }
 
-  void _pressedAddSymptom(){
-
+  void _pressedAddNewSymptomButton(){
+    _showAddSymptomDialog();
   }
 
   Future<void> _showAddSymptomDialog() async {

@@ -22,7 +22,7 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      appBar: PlatformAppBar(title: PlatformText("Symptoms Survey"),),
+      appBar: PlatformAppBar(title: PlatformText("Symptoms Knowledge"),),
       body: Padding(
         padding: EdgeInsetsGeometry.fromLTRB(2, 0, 2, 0),
         child:Column(
@@ -45,8 +45,8 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
 
     List<Widget> survey = [];
 
-    for (int i = 0; i < 5; i++){
-      survey.add(Text("Symptom${i}(Description for symptom ${i})"));
+    for (int i = 0; i < Symptoms.symptomList.length; i++){
+      survey.add(Align(alignment: Alignment.centerLeft,child:Text("${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",textAlign: TextAlign.left,)));
       LikertChoice symptomWidget = LikertChoice();
       survey.add(symptomWidget);
       likertWidgets["${i}"] = symptomWidget;

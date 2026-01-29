@@ -3,7 +3,7 @@ class Symptom {
   final String description;
   final List<String> reactions;
 
-  Symptom ({
+  const Symptom ({
     required this.name,
     required this.description,
     required this.reactions,

@@ -41,8 +41,8 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
 
     List<Widget> survey = [];
     //@TODO cahnge max 
-    for (int i = 0; i < 5; i++){
-      survey.add(Text("Symptom${i}(Description fo symptom ${i})"));
+    for (int i = 0; i < Symptoms.symptomList.length; i++){
+      survey.add(Align(alignment: Alignment.centerLeft,child:Text("${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",textAlign: TextAlign.left,)));
       LikertChoice symptomWidget = LikertChoice();
       survey.add(symptomWidget);
       likertWidgets["${i}"] = symptomWidget;
