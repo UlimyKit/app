@@ -23,17 +23,22 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       appBar: PlatformAppBar(title: PlatformText("Symptoms Survey"),),
-      body: Column(
-        children: [
-          _build_known_Symptoms(),
-          Padding(
-            padding: EdgeInsetsGeometry.fromLTRB(50, 20, 0, 5),
-            child: ElevatedButton(onPressed: _submit_survey, child: const Text('Submit')),
-          )
-        ],
+      body: Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(2, 0, 2, 0),
+        child:Column(
+          children: [
+            _build_known_Symptoms(),
+            Padding(
+              padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 5),
+              child: Center(
+              child: ElevatedButton(onPressed: _submit_survey, child: const Text('Submit')),
+              ),
+            ),
+          ],
       ),
-
+      )
     );
+
   }
 
   Widget _build_known_Symptoms(){
@@ -41,7 +46,7 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
     List<Widget> survey = [];
 
     for (int i = 0; i < 5; i++){
-      survey.add(Text("Symptom${i}(Description fo symptom ${i})"));
+      survey.add(Text("Symptom${i}(Description for symptom ${i})"));
       LikertChoice symptomWidget = LikertChoice();
       survey.add(symptomWidget);
       likertWidgets["${i}"] = symptomWidget;
@@ -54,7 +59,6 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   }
 
   void _submit_survey() {
-    Navigator.pushReplacementNamed(context, '/symptomFrequencySurvey');
+    Navigator.pushNamed(context, '/symptomFrequencySurvey');
   }
-
 }

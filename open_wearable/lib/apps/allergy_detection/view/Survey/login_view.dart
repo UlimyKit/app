@@ -14,26 +14,38 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      appBar: PlatformAppBar(title: PlatformText("Enter your ID"),),
-      body: Column(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-          SizedBox(
-            width: 250,
-            child: TextField(
-            decoration: InputDecoration(border: OutlineInputBorder(), labelText: "User ID"),
+      appBar: PlatformAppBar(
+        title: PlatformText("Enter your ID"),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // shrink column to content
+            crossAxisAlignment: CrossAxisAlignment.stretch, // buttons fill width
+            children: [
+              SizedBox(
+                height: 16,
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "User ID",
+                ),
+              ),
+              SizedBox(height: 20),
+              FilledButton.tonal(
+                onPressed: _submit_id,
+                child: PlatformText("Submit"),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _continueButtonPressed,
+                child: PlatformText("Continue"),
+              ),
+            ],
+          ),
         ),
-          ),
-          FilledButton.tonal(onPressed: _submit_id, child: PlatformText("Submit")),
-        ],
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, 30, 5, 0),
-            child: ElevatedButton(onPressed: _continueButtonPressed, child: const Text("Continue")),
-          ),
-        ],
       ),
     );
   }
@@ -43,6 +55,6 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _continueButtonPressed(){
-    Navigator.pushReplacementNamed(context, '/symptomKnowledgeSurvey');
+    Navigator.pushReplacementNamed(context, '/demographicsSurvey');
   }
 }

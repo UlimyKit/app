@@ -19,16 +19,20 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      appBar: PlatformAppBar(title: PlatformText("You experience this symptom frequently"),),
-      body: Column(
+      appBar: PlatformAppBar(title: PlatformText("Symptom Frequency"),),
+      body: Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(2, 0, 2, 0),
+        child: Column(
         children: [
+
           _build_frequence_Symptoms(),
           Padding(
-            padding: EdgeInsetsGeometry.fromLTRB(50, 20, 0, 5),
+            padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 5),
             child: ElevatedButton(onPressed: _submit_survey, child: const Text('Submit')),
           )
         ],
       ),
+      )
 
     );
   }
@@ -51,7 +55,7 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   }
 
   void _submit_survey() {
-    Navigator.pushReplacementNamed(context, '/currentSymptomSurvey');
+    Navigator.pushNamed(context, '/currentSymptomSurvey');
   }
 
 }
