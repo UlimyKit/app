@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_earable_flutter/open_earable_flutter.dart';
+import 'package:open_wearable/apps/allergy_detection/view/allergy_detection_view.dart';
 import 'package:open_wearable/apps/heart_tracker/widgets/heart_tracker_page.dart';
 import 'package:open_wearable/apps/posture_tracker/model/earable_attitude_tracker.dart';
 import 'package:open_wearable/apps/posture_tracker/view/posture_tracker_view.dart';
@@ -64,6 +65,22 @@ List<AppInfo> _apps = [
       },
     ),
   ),
+  AppInfo(
+    logoPath: "lib/apps/allergy_detection/assets/AllergyDetectionLogo.png",
+    title: "Allergy Detection App",
+    description: "Detect symptoms of hayfever",
+    widget: SelectEarableView(startApp: (wearable, sensorConfigProvider) {
+        if (wearable.hasCapability<SensorManager>()) {
+          return AllergyDetectionView();
+        }else{
+          return PlatformScaffold(
+            appBar: PlatformAppBar(title: PlatformText("Not a compatible wearable"),),
+            body: Center(child: PlatformText("Error"),),
+          );
+        }
+    }
+  ),
+  )
 ];
 
 class AppsPage extends StatelessWidget {

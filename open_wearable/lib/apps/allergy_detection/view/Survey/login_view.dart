@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:go_router/go_router.dart';
+import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget{
   const LoginView({super.key});
@@ -10,6 +11,8 @@ class LoginView extends StatefulWidget{
 }
 
 class _LoginViewState extends State<LoginView> {
+
+  String userId = "";
 
   @override
   Widget build(BuildContext context) {
@@ -31,27 +34,22 @@ class _LoginViewState extends State<LoginView> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: "User ID",
+                  
                 ),
+                onChanged: (value) => Provider.of<SurveyData>(context, listen: false).setUserId(value),
               ),
-              SizedBox(height: 20),
-              FilledButton.tonal(
-                onPressed: _submit_id,
-                child: PlatformText("Submit"),
-              ),
+              
               SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _continueButtonPressed,
+              Consumer<SurveyData>(
+                builder: (context, surveyData, child) {return ElevatedButton(
+                onPressed: surveyData.userIdFilled ? _continueButtonPressed : null,
                 child: PlatformText("Continue"),
-              ),
+              );})
             ],
           ),
         ),
       ),
     );
-  }
-
-  void _submit_id(){
-    
   }
 
   void _continueButtonPressed(){
