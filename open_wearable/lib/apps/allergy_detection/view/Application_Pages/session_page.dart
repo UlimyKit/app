@@ -68,7 +68,6 @@ class _SessionPageState extends State<SessionPage> {
   }
 
   void _symptomAddButton(int index){
-    //TODO change 
     print("Symptom ${detectedSymptoms[index]} was detected correctly");
     record!.addDetectedSymptom(detectedSymptoms[index]);
     setState(() {
@@ -79,10 +78,7 @@ class _SessionPageState extends State<SessionPage> {
 
   void _symptomEditButton(int index) {
     print("Symptom ${detectedSymptoms[index]} was edited");
-
-    setState(() {
-      
-    });
+    _showEditSymptomDialog(index);
     
   }
 
@@ -133,6 +129,81 @@ class _SessionPageState extends State<SessionPage> {
 
   void _pressedAddNewSymptomButton(){
     _showAddSymptomDialog();
+  }
+
+  Future<void> _showEditSymptomDialog(int index) async{
+    Symptom? selectedSymptom;
+
+    await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder( // allows setState inside the dialog
+        builder: (context,setStateDialog) {
+          return AlertDialog(
+            title: Text('Edit Symptom'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Symptom name input
+                Autocomplete<Symptom>(
+                  optionsBuilder: (TextEditingValue value) {
+                    if (value.text.isEmpty) {
+                      return Symptoms.symptomList;
+                    }
+                    return Symptoms.symptomList.where((symptom)=>
+                    symptom.name.toLowerCase().contains(value.text.toLowerCase()));
+                  },
+                  displayStringForOption: (Symptom s) => s.name,
+                  onSelected: (Symptom selection) {
+                    selectedSymptom = selection;
+                  },
+                  fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                      return TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          labelText: 'Symptom',
+                          border: OutlineInputBorder(),
+                        ),
+                        onEditingComplete: () {
+                          // prevent invalid text
+                          final match = Symptoms.symptomList.any(
+                              (s) => s.name == controller.text);
+                          if (!match) {
+                            controller.clear();
+                            selectedSymptom = null;
+                          }
+                        },
+                      );
+                    },
+                  ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context), // cancel
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (selectedSymptom != null) {
+                    setState(() {
+                      detectedSymptoms[index] = DetectedSymptom(symptom: selectedSymptom!, detectionTime: detectedSymptoms[index].detectionTime);
+                    });
+                    
+                    Navigator.pop(context); // close dialog
+                  }
+                },
+                child: Text('Add'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+    
   }
 
   Future<void> _showAddSymptomDialog() async {
@@ -200,7 +271,7 @@ class _SessionPageState extends State<SessionPage> {
                         TimeOfDay? picked = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.now(),
-                          initialEntryMode: TimePickerEntryMode.inputOnly,
+                          initialEntryMode: TimePickerEntryMode.dial,
                         );
                         if (picked != null) {
                           setStateDialog(() {
