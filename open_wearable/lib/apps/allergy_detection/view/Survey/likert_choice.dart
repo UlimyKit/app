@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LikertChoice extends StatefulWidget{
-
-  LikertChoice({super.key});
+  final Function(int) onScoreChanged;
+  LikertChoice({super.key, required this.onScoreChanged});
 
   @override
   State<LikertChoice> createState() {
@@ -44,6 +44,7 @@ class _LikertChoiceState extends State<LikertChoice> {
         setState(() {
           score = newSelection.first;
         });
+        widget.onScoreChanged(newSelection.first);
       },
       showSelectedIcon: false,
     );

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
+import 'package:open_wearable/apps/allergy_detection/model/likert_scale.dart';
+import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
+import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/likert_choice.dart';
+import 'package:provider/provider.dart';
 
 class SymptomFrequencySurvey extends StatefulWidget {
 
@@ -14,7 +18,7 @@ class SymptomFrequencySurvey extends StatefulWidget {
 
 class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   
-  Map<String, Widget> likertWidgets = {};
+  Map<Symptom, LikertScale> likertScore = {};
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +46,15 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
     List<Widget> survey = [];
     //@TODO cahnge max 
     for (int i = 0; i < Symptoms.symptomList.length; i++){
-      survey.add(Align(alignment: Alignment.centerLeft,child:Text("${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",textAlign: TextAlign.left,)));
-      LikertChoice symptomWidget = LikertChoice();
+      survey.add(Align(
+        alignment: Alignment.centerLeft,
+        child:Text("You experience ${Symptoms.symptomList[i].name} frequently\n(${Symptoms.symptomList[i].description})",
+        textAlign: TextAlign.left,)));
+      LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
+        likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
+      },);
       survey.add(symptomWidget);
-      likertWidgets["${i}"] = symptomWidget;
+  
     }
 
     return Column(
@@ -55,6 +64,7 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   }
 
   void _submit_survey() {
+    Provider.of<SurveyData>(context, listen: false).setFrequenceSymptoms(likertScore);
     Navigator.pushNamed(context, '/currentSymptomSurvey');
   }
 

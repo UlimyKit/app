@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
+import 'package:open_wearable/apps/allergy_detection/model/likert_scale.dart';
+import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/likert_choice.dart';
+import 'package:provider/provider.dart';
 
 
 class SymptomsSurveyView extends StatefulWidget {
@@ -17,7 +20,7 @@ class SymptomsSurveyView extends StatefulWidget {
 class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   
 
-  Map<String, Widget> likertWidgets = {};
+  Map<Symptom, LikertScale> likertScore = {};
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +49,14 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
     List<Widget> survey = [];
 
     for (int i = 0; i < Symptoms.symptomList.length; i++){
-      survey.add(Align(alignment: Alignment.centerLeft,child:Text("${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",textAlign: TextAlign.left,)));
-      LikertChoice symptomWidget = LikertChoice();
+      survey.add(
+        Align(alignment: Alignment.centerLeft,
+        child:Text("You know the symptom ${Symptoms.symptomList[i].name} well\n(${Symptoms.symptomList[i].description})",
+        textAlign: TextAlign.left,)));
+      LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
+        likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
+      },);
       survey.add(symptomWidget);
-      likertWidgets["${i}"] = symptomWidget;
     }
 
     return Column(
@@ -59,6 +66,9 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   }
 
   void _submit_survey() {
+    Provider.of<SurveyData>(context, listen: false).setKnownSymptoms(likertScore);
     Navigator.pushNamed(context, '/symptomFrequencySurvey');
   }
+
+
 }

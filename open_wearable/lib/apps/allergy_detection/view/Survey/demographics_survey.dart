@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:open_wearable/apps/allergy_detection/model/allergy.dart';
+import 'package:open_wearable/apps/allergy_detection/model/gender.dart';
+import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
+import 'package:provider/provider.dart';
 
-enum Gender {
-  male,
-  female,
-  other,
-}
+
 
 class DemographicSurveyView extends StatefulWidget {
 
@@ -20,8 +19,9 @@ class _DemographicSurveyViewState extends State<DemographicSurveyView> {
   TextEditingController ageInputController = TextEditingController();
   TextEditingController allergyInputController = TextEditingController();
 
-
+  int age = -1;
   Gender? genderChoice = Gender.other;
+  
 
   List<Allergy> hayFeverAllergies = [
   Allergy(name: "Ambrosia (Ragweed)"),
@@ -60,6 +60,9 @@ class _DemographicSurveyViewState extends State<DemographicSurveyView> {
                   TextField(
                     controller: ageInputController,
                     keyboardType: TextInputType.number,
+                    onChanged: (value) => setState(() {
+                      age = int.parse(value);
+                    }),
                     decoration: InputDecoration(
                       labelText: "Age",
                       suffixText: "years",
@@ -141,7 +144,7 @@ class _DemographicSurveyViewState extends State<DemographicSurveyView> {
             ),
           ),
           Padding(padding: EdgeInsetsGeometry.fromLTRB(5, 10, 5, 10),
-          child: ElevatedButton(onPressed: _continueButtonPressed, child: const Text("Continue")),)
+          child: ElevatedButton(onPressed: _isFilledOut()?_continueButtonPressed:null, child: const Text("Continue")),)
         ],
         
       ),
@@ -150,7 +153,27 @@ class _DemographicSurveyViewState extends State<DemographicSurveyView> {
   }
 
   void _continueButtonPressed(){
+
+    Provider.of<SurveyData>(context, listen: false).setAge(age);
+    List<String> allergies = [];
+
+    for (Allergy allergy in hayFeverAllergies) {
+      //iterate through the allergies to check which is selected and add them to SurveyData
+      if (allergy.selected) {
+        allergies.add(allergy.name);
+      }
+    }
+    if (allergyInputController.text != "") {
+      //trim "other" allergies and add them to the list
+      allergies.addAll(allergyInputController.text.split(',').map((s) => s.trim()).toList());
+    }
+
+    // change to next surveyPage
     Navigator.pushNamed(context, '/symptomKnowledgeSurvey');
 
+  }
+
+  bool _isFilledOut(){
+    return age > 0;
   }
 }

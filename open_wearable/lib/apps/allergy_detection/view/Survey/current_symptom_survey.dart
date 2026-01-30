@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
+import 'package:open_wearable/apps/allergy_detection/model/likert_scale.dart';
+import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
+import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/likert_choice.dart';
+import 'package:provider/provider.dart';
 
 class CurrentSymptomsSurvey extends StatefulWidget {
 
@@ -12,7 +16,7 @@ class CurrentSymptomsSurvey extends StatefulWidget {
 }
 
 class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
-  Map<String, Widget> likertWidgets = {};
+  Map<Symptom, LikertScale> likertScore = {};
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +44,15 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
     List<Widget> survey = [];
 
     for (int i = 0; i < Symptoms.symptomList.length; i++){
-      survey.add(Align(alignment: Alignment.centerLeft,child:Text("${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",textAlign: TextAlign.left,)));
-      LikertChoice symptomWidget = LikertChoice();
+      survey.add(
+        Align(alignment: Alignment.centerLeft,
+        child:Text("You recently experienced ${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",
+        textAlign: TextAlign.left,)));
+      LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
+        likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
+      },);
       survey.add(symptomWidget);
-      likertWidgets["${i}"] = symptomWidget;
+      
     }
 
     return Column(
@@ -53,6 +62,7 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
   }
 
   void _submit_survey() {
+    Provider.of<SurveyData>(context, listen: false).setCurrentSymptoms(likertScore);
     Navigator.pushNamedAndRemoveUntil(context, '/mainpage', (route) => false);
   }
 }
