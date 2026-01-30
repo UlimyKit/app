@@ -53,6 +53,6 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
   }
 
   void _submit_survey() {
-    Navigator.pushReplacementNamed(context, '/mainpage');
+    Navigator.pushNamedAndRemoveUntil(context, '/mainpage', (route) => false);
   }
 }

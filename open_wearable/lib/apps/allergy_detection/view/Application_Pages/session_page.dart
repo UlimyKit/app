@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:open_wearable/apps/allergy_detection/constants.dart';
+import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
+import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 
 class SessionPage extends StatefulWidget {
   const SessionPage({super.key});
@@ -9,7 +12,7 @@ class SessionPage extends StatefulWidget {
 }
 
 class _SessionPageState extends State<SessionPage> {
-  List<String> detectedSymptoms = <String>["Example_symptom"];
+  List<DetectedSymptom> detectedSymptoms = <DetectedSymptom>[DetectedSymptom(symptom: Symptoms.symptomList[0], detectionTime: TimeOfDay.now())];
   bool recording = false;
   var stopwatch = Stopwatch();
 
@@ -32,12 +35,12 @@ class _SessionPageState extends State<SessionPage> {
                 itemCount: detectedSymptoms.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    leading: Icon(Icons.loupe),
-                    title: Text(detectedSymptoms[index]),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    title: Text("${detectedSymptoms[index].symptom.name} at ${detectedSymptoms[index].detectionTime.format(context)}"),
+                    trailing: OverflowBar(
+                      overflowAlignment: OverflowBarAlignment.end,
+                      spacing: 5,
                       children: <Widget>[
-                        ElevatedButton(onPressed: () => _symptomAddButton(index), child: Icon(Icons.check)),
+                        ElevatedButton(onPressed: () => _symptomAddButton(index), child: Icon(Icons.check)),               
                         ElevatedButton(onPressed: () => _symptomEditButton(index), child: Icon(Icons.edit)),
                         ElevatedButton(onPressed: () => _symptomWrongButton(index), child: Icon(Icons.close)),
                       ],
@@ -71,8 +74,9 @@ class _SessionPageState extends State<SessionPage> {
 
   void _symptomEditButton(int index) {
     print("Symptom ${detectedSymptoms[index]} was edited");
+
     setState(() {
-      detectedSymptoms.removeAt(index);
+      
     });
     
   }
@@ -85,9 +89,9 @@ class _SessionPageState extends State<SessionPage> {
     
   }
 
-  void addSymptom(String name) {
+  void addSymptom(Symptom symptom, TimeOfDay detectionTime) {
     setState(() {
-      detectedSymptoms.add(name);
+      detectedSymptoms.add(DetectedSymptom(symptom: symptom, detectionTime: detectionTime));
     });
   }
 
@@ -103,29 +107,54 @@ class _SessionPageState extends State<SessionPage> {
   }
 
   Future<void> _showAddSymptomDialog() async {
-  String symptomName = '';
+  Symptom? selectedSymptom;
   TimeOfDay? selectedTime;
 
   await showDialog(
     context: context,
     builder: (BuildContext context) {
       return StatefulBuilder( // allows setState inside the dialog
-        builder: (context, setState) {
+        builder: (context,setStateDialog) {
           return AlertDialog(
             title: Text('Add Symptom'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Symptom name input
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Symptom Name',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) {
-                    symptomName = value;
+                Autocomplete<Symptom>(
+                  optionsBuilder: (TextEditingValue value) {
+                    if (value.text.isEmpty) {
+                      return Symptoms.symptomList;
+
+                    }
+                    return Symptoms.symptomList.where((symptom)=>
+                    symptom.name.toLowerCase().contains(value.text.toLowerCase()));
                   },
-                ),
+                  displayStringForOption: (Symptom s) => s.name,
+                  onSelected: (Symptom selection) {
+                    selectedSymptom = selection;
+                  },
+                  fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                      return TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          labelText: 'Symptom',
+                          border: OutlineInputBorder(),
+                        ),
+                        onEditingComplete: () {
+                          // prevent invalid text
+                          final match = Symptoms.symptomList.any(
+                              (s) => s.name == controller.text);
+                          if (!match) {
+                            controller.clear();
+                            selectedSymptom = null;
+                          }
+                        },
+                      );
+                    },
+                  ),
                 SizedBox(height: 16),
 
                 // Time picker
@@ -142,9 +171,10 @@ class _SessionPageState extends State<SessionPage> {
                         TimeOfDay? picked = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.now(),
+                          initialEntryMode: TimePickerEntryMode.inputOnly,
                         );
                         if (picked != null) {
-                          setState(() {
+                          setStateDialog(() {
                             selectedTime = picked;
                           });
                         }
@@ -162,11 +192,12 @@ class _SessionPageState extends State<SessionPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  if (symptomName.isNotEmpty && selectedTime != null) {
+                  if (selectedSymptom !=null && selectedTime != null) {
                     // Add the symptom with time to your list
                     setState(() {
                       detectedSymptoms.add(
-                          '$symptomName at ${selectedTime!.format(context)}');
+                          DetectedSymptom(symptom: selectedSymptom!, detectionTime: selectedTime!));
+                      print(detectedSymptoms);
                     });
                     Navigator.pop(context); // close dialog
                   }
