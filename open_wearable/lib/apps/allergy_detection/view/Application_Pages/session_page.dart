@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
 import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
+import 'package:open_wearable/apps/allergy_detection/model/record.dart';
+import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
+import 'package:provider/provider.dart';
 
 class SessionPage extends StatefulWidget {
   const SessionPage({super.key});
@@ -15,7 +18,7 @@ class _SessionPageState extends State<SessionPage> {
   List<DetectedSymptom> detectedSymptoms = <DetectedSymptom>[DetectedSymptom(symptom: Symptoms.symptomList[0], detectionTime: TimeOfDay.now())];
   bool recording = false;
   var stopwatch = Stopwatch();
-
+  Recording? record;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class _SessionPageState extends State<SessionPage> {
       body: Column(
         children: [
           Expanded(
-            child: Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
+            child: Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 5),
               child: ClipRRect(borderRadius: BorderRadiusGeometry.circular(16),
               child: Container(
                 padding: EdgeInsets.all(2),
@@ -40,9 +43,9 @@ class _SessionPageState extends State<SessionPage> {
                       overflowAlignment: OverflowBarAlignment.end,
                       spacing: 5,
                       children: <Widget>[
-                        ElevatedButton(onPressed: () => _symptomAddButton(index), child: Icon(Icons.check)),               
-                        ElevatedButton(onPressed: () => _symptomEditButton(index), child: Icon(Icons.edit)),
-                        ElevatedButton(onPressed: () => _symptomWrongButton(index), child: Icon(Icons.close)),
+                        ElevatedButton(onPressed: () => recording?_symptomAddButton(index):null, child: Icon(Icons.check)),               
+                        ElevatedButton(onPressed: () => recording?_symptomEditButton(index):null, child: Icon(Icons.edit)),
+                        ElevatedButton(onPressed: () => recording?_symptomWrongButton(index):null, child: Icon(Icons.close)),
                       ],
                     ),
                   );
@@ -52,9 +55,10 @@ class _SessionPageState extends State<SessionPage> {
           Padding(padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 5,
             children: <Widget>[
-              ElevatedButton(onPressed: _pressedPlayButton, child: recording?Icon(Icons.play_arrow):Icon(Icons.pause)),
-              ElevatedButton(onPressed: _pressedAddNewSymptomButton, child: Icon(Icons.add))
+              ElevatedButton(onPressed: _pressedPlayButton, child: recording?Icon(Icons.pause):Icon(Icons.play_arrow)),
+              ElevatedButton(onPressed: recording?_pressedAddNewSymptomButton:null, child: Icon(Icons.add))
             ],
           ))
         ],
@@ -66,6 +70,7 @@ class _SessionPageState extends State<SessionPage> {
   void _symptomAddButton(int index){
     //TODO change 
     print("Symptom ${detectedSymptoms[index]} was detected correctly");
+    record!.addDetectedSymptom(detectedSymptoms[index]);
     setState(() {
       detectedSymptoms.removeAt(index);
     });
@@ -95,8 +100,32 @@ class _SessionPageState extends State<SessionPage> {
     });
   }
 
+  void _saveRecord(){
+    print("saving Record");
+  }
+
+  void _stopRecordingSession(){
+    record!.stopRecording();
+      _saveRecord();
+
+      setState(() {
+        detectedSymptoms = [];
+      });
+  }
+
+  void _startRecordingSession(){
+    record = Recording(userId:Provider.of<SurveyData>(context, listen: false).userId);
+  }
+
   void _pressedPlayButton(){
     print("PlayButton pressed");
+    
+    if (!recording){
+      _startRecordingSession();
+    } else {
+      _stopRecordingSession();
+    }
+
     setState(() {
       recording = !recording;
     });
@@ -193,12 +222,9 @@ class _SessionPageState extends State<SessionPage> {
               ElevatedButton(
                 onPressed: () {
                   if (selectedSymptom !=null && selectedTime != null) {
-                    // Add the symptom with time to your list
-                    setState(() {
-                      detectedSymptoms.add(
-                          DetectedSymptom(symptom: selectedSymptom!, detectionTime: selectedTime!));
-                      print(detectedSymptoms);
-                    });
+                    
+                    addSymptom(selectedSymptom!, selectedTime!);
+                    
                     Navigator.pop(context); // close dialog
                   }
                 },
