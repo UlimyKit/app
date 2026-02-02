@@ -71,7 +71,7 @@ List<AppInfo> _apps = [
     description: "Detect symptoms of hayfever",
     widget: SelectEarableView(startApp: (wearable, sensorConfigProvider) {
         if (wearable.hasCapability<SensorManager>()) {
-          return AllergyDetectionView();
+          return AllergyDetectionView(sensorManager: wearable.requireCapability<SensorManager>(), sensorConfigurationProvider: sensorConfigProvider,);
         }else{
           return PlatformScaffold(
             appBar: PlatformAppBar(title: PlatformText("Not a compatible wearable"),),

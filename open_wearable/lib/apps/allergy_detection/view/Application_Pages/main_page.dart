@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:open_earable_flutter/open_earable_flutter.dart';
 import 'package:open_wearable/apps/allergy_detection/controller/recording_handler.dart';
+import 'package:open_wearable/apps/allergy_detection/controller/symptom_detector.dart';
 import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/pollen_flight.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/session_history.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/session_page.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/settings_page.dart';
+import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
 import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final SensorManager sensorManager;
+  final SensorConfigurationProvider sensorConfigurationProvider;
+
+  const MainPage({super.key, required this.sensorManager, required this.sensorConfigurationProvider});
 
   State<MainPage> createState() => _MainPageState();
 }
@@ -17,11 +23,20 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
 
   int currentPageIndex = 0;
+  late SymptomDetector _detector;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final recordingHandler = RecordingHandler(userId: context.read<SurveyData>().userId);
+    _detector = SymptomDetector(widget.sensorManager, widget.sensorConfigurationProvider, recordingHandler);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => RecordingHandler(userId: context.read<SurveyData>().userId),
+    return ChangeNotifierProvider.value(
+      value: _detector.getRecordingHandler(),
       child: Scaffold(
           bottomNavigationBar: NavigationBar(
             selectedIndex: currentPageIndex,
