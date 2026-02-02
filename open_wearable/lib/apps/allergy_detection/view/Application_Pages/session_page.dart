@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
+import 'package:open_wearable/apps/allergy_detection/controller/recording_handler.dart';
 import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
-import 'package:open_wearable/apps/allergy_detection/model/record.dart';
+import 'package:open_wearable/apps/allergy_detection/model/recording.dart';
 import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:provider/provider.dart';
@@ -15,13 +16,14 @@ class SessionPage extends StatefulWidget {
 }
 
 class _SessionPageState extends State<SessionPage> {
-  List<DetectedSymptom> detectedSymptoms = <DetectedSymptom>[DetectedSymptom(symptom: Symptoms.symptomList[0], detectionTime: TimeOfDay.now())];
-  bool recording = false;
   var stopwatch = Stopwatch();
-  Recording? record;
+  
 
   @override
   Widget build(BuildContext context) {
+    var detectedSymptoms = context.watch<RecordingHandler>().getDetectedSymptoms();
+    var recording = context.watch<RecordingHandler>().isRecording();
+
     return Scaffold(
       appBar: AppBar(title: Text("SessionPage"),),
       body: Column(
@@ -43,7 +45,7 @@ class _SessionPageState extends State<SessionPage> {
                       overflowAlignment: OverflowBarAlignment.end,
                       spacing: 5,
                       children: <Widget>[
-                        ElevatedButton(onPressed: () => recording?_symptomAddButton(index):null, child: Icon(Icons.check)),               
+                        ElevatedButton(onPressed: () => recording?_symptomConfirmButton(index):null, child: Icon(Icons.check)),               
                         ElevatedButton(onPressed: () => recording?_symptomEditButton(index):null, child: Icon(Icons.edit)),
                         ElevatedButton(onPressed: () => recording?_symptomWrongButton(index):null, child: Icon(Icons.close)),
                       ],
@@ -67,64 +69,42 @@ class _SessionPageState extends State<SessionPage> {
     );
   }
 
-  void _symptomAddButton(int index){
-    print("Symptom ${detectedSymptoms[index]} was detected correctly");
-    record!.addDetectedSymptom(detectedSymptoms[index]);
-    setState(() {
-      detectedSymptoms.removeAt(index);
-    });
-    
+  void _symptomConfirmButton(int index){
+    context.read<RecordingHandler>().confirmSymptom(index);
   }
 
   void _symptomEditButton(int index) {
-    print("Symptom ${detectedSymptoms[index]} was edited");
     _showEditSymptomDialog(index);
     
   }
 
   void _symptomWrongButton(int index) {
-    print("Symptom ${detectedSymptoms[index]} was detected incorrectly");
-    setState(() {
-      detectedSymptoms.removeAt(index);
-    });
+    context.read<RecordingHandler>().deleteDetectedSymptom(index);
     
   }
 
   void addSymptom(Symptom symptom, TimeOfDay detectionTime) {
-    setState(() {
-      detectedSymptoms.add(DetectedSymptom(symptom: symptom, detectionTime: detectionTime));
-    });
-  }
-
-  void _saveRecord(){
-    print("saving Record");
+    context.read<RecordingHandler>().addDetectedSymptom(DetectedSymptom(symptom: symptom, detectionTime: detectionTime));
   }
 
   void _stopRecordingSession(){
-    record!.stopRecording();
-      _saveRecord();
-
-      setState(() {
-        detectedSymptoms = [];
-      });
+    context.read<RecordingHandler>().stopRecording();
   }
 
   void _startRecordingSession(){
-    record = Recording(userId:Provider.of<SurveyData>(context, listen: false).userId);
+    context.read<RecordingHandler>().startRecording();
   }
 
   void _pressedPlayButton(){
-    print("PlayButton pressed");
-    
-    if (!recording){
+    if (!context.read<RecordingHandler>().isRecording()){
       _startRecordingSession();
     } else {
       _stopRecordingSession();
     }
+  }
 
-    setState(() {
-      recording = !recording;
-    });
+  void editDetectedSymptom(Symptom symptom, int index) {
+    context.read<RecordingHandler>().editDetectedSymptom(symptom, index);
   }
 
   void _pressedAddNewSymptomButton(){
@@ -188,9 +168,7 @@ class _SessionPageState extends State<SessionPage> {
               ElevatedButton(
                 onPressed: () {
                   if (selectedSymptom != null) {
-                    setState(() {
-                      detectedSymptoms[index] = DetectedSymptom(symptom: selectedSymptom!, detectionTime: detectedSymptoms[index].detectionTime);
-                    });
+                    editDetectedSymptom(selectedSymptom!, index);
                     
                     Navigator.pop(context); // close dialog
                   }
