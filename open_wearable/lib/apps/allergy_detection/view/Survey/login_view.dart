@@ -36,13 +36,15 @@ class _LoginViewState extends State<LoginView> {
                   labelText: "User ID",
                   
                 ),
-                onChanged: (value) => Provider.of<SurveyData>(context, listen: false).setUserId(value),
+                onChanged: (value) => setState(() {
+                  userId = value.trim();
+                }),
               ),
               
               SizedBox(height: 16),
               Consumer<SurveyData>(
                 builder: (context, surveyData, child) {return ElevatedButton(
-                onPressed: surveyData.userIdFilled ? _continueButtonPressed : null,
+                onPressed: userId.isNotEmpty ? _continueButtonPressed : null,
                 child: PlatformText("Continue"),
               );})
             ],
@@ -52,7 +54,22 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  void _continueButtonPressed(){
+  Future<void> _continueButtonPressed() async{
+    
+    final surveyData = context.read<SurveyData>();
+
+    final exists = await surveyData.loadOrCreate(userId);
+
+    if (!mounted) return;
+
+    if (exists) {
+    // User already exists → resume
+    Navigator.pushReplacementNamed(context, '/currentSymptomSurvey');
+    } else {
+    // New user → start survey
     Navigator.pushReplacementNamed(context, '/demographicsSurvey');
+    }
   }
+
+
 }
