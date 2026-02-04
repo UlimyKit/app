@@ -75,7 +75,7 @@ class RecordingHandler extends ChangeNotifier{
   }
 
   void _saveRecording(){
-    print("implementPeristentDataRecording");
+    currentRecording!.saveRecording();
   }
 
   bool isRecording(){

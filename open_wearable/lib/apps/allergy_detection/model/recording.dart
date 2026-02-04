@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:open_wearable/apps/allergy_detection/data/symptom_recording_storage.dart';
 import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 
 class Recording {
+  final RecordingCsvStorage storage = RecordingCsvStorage();
   final String userId;
   DateTime startingTime;
   DateTime? endingTime;
@@ -39,7 +41,7 @@ class Recording {
 
   void fromString(String csvString){
     startingTime = DateTime.parse(csvString.split(',')[0]);
-    _detectedSymptoms = csvString.split(',')[0].split('|').map((entry) {
+    _detectedSymptoms = csvString.split(',')[1].split('|').map((entry) {
     final parts = entry.split('@');
     return DetectedSymptom(
       symptom: SymptomParsing.symptomFromName(parts[0])!,
@@ -56,4 +58,7 @@ class Recording {
     );
   }
 
+  void saveRecording(){
+    storage.appendRecording(this);
+  }
 }
