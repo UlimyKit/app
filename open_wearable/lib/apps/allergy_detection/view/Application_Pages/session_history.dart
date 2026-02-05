@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:open_wearable/apps/allergy_detection/data/symptom_recording_storage.dart';
+import 'package:open_wearable/apps/allergy_detection/model/recording.dart';
 import 'package:open_wearable/apps/allergy_detection/model/recording_history.dart';
 import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/recording_detail.dart';
@@ -18,16 +20,23 @@ class _SessionHistoryPageState extends State<SessionHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => RecordingHistory(userId:context.read<SurveyData>().userId),
+      create: (_) => RecordingHistory(userId: context.read<SurveyData>().userId),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Session History'),
         ),
-        body: Consumer<RecordingHistory>(
-          builder: (context, history, child) {
-            final recordings = history.recordings;
+        body: FutureBuilder<List<Recording>>(
+          future: _loadRecordings(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            final recordings = snapshot.data ?? [];
             if (recordings.isEmpty) {
-              return const Center(child: Text('No recordings yet'));
+              return const Center(child: Text('No recordings found'));
             }
             return ListView.builder(
               itemCount: recordings.length,
@@ -56,5 +65,11 @@ class _SessionHistoryPageState extends State<SessionHistoryPage> {
         ),
       ),
     );
+  }
+
+  Future<List<Recording>> _loadRecordings() async{
+    final storage = RecordingCsvStorage();
+    List<Recording> recordings = await storage.readRecordings(context.read<SurveyData>().userId);
+    return recordings;
   }
 }

@@ -13,9 +13,10 @@ import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
 import 'package:provider/provider.dart';
 
 class AllergyDetectionView extends StatelessWidget {
+  
   final SensorManager sensorManager;
   final SensorConfigurationProvider sensorConfigurationProvider;
-
+  
 
   const AllergyDetectionView({super.key, required this.sensorManager, required this.sensorConfigurationProvider});
 

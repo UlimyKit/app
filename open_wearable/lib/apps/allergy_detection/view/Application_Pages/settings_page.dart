@@ -1,5 +1,15 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:open_wearable/apps/allergy_detection/controller/recording_handler.dart';
+import 'package:open_wearable/apps/allergy_detection/data/symptom_recording_storage.dart';
+import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -9,10 +19,153 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  bool _exporting = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("SettingsPage"),),
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+        title: const Text('Settings'),
+      ),
+      body: PlatformWidget(
+        material: (_, __) => _buildMaterial(),
+        cupertino: (_, __) => _buildCupertino(),
+      ),
+    );
+  }
+
+  Widget _buildMaterial() {
+    return ListView(
+      children: [
+        const _SectionHeader(title: 'Data export'),
+
+        ListTile(
+          leading: const Icon(Icons.assignment_outlined),
+          title: const Text('Export surveys'),
+          subtitle: const Text('Save survey data as CSV'),
+          trailing: _exporting
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.chevron_right),
+          onTap:_exporting ? null : _exportSurveys, ),
+
+        const Divider(height: 1),
+
+        ListTile(
+          leading: const Icon(Icons.mic_none),
+          title: const Text('Export recordings'),
+          subtitle: const Text('Save audio files'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: _exporting ? null : _exportRecordings,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCupertino() {
+    return CupertinoListSection.insetGrouped(
+      header: const Text('Data export'),
+      children: [
+        CupertinoListTile(
+          leading: const Icon(CupertinoIcons.doc_text),
+          title: const Text('Export surveys'),
+          subtitle: const Text('Save survey data as CSV'),
+          trailing: _exporting
+              ? const CupertinoActivityIndicator()
+              : const CupertinoListTileChevron(),
+          onTap: _exporting ? null : _exportSurveys,
+        ),
+        CupertinoListTile(
+          leading: const Icon(CupertinoIcons.mic),
+          title: const Text('Export recordings'),
+          subtitle: const Text('Save audio files'),
+          trailing: const CupertinoListTileChevron(),
+          onTap: _exporting ? null : _exportRecordings,
+        ),
+      ],
+    );
+  }
+  
+  
+  Future<void> _exportSurveys() async {
+    setState(() => _exporting = true);
+
+    try {
+      SurveyData surveyData = context.read<SurveyData>();
+      final userId = surveyData.userId;
+      final surveyDataCSV = surveyData.toCSV(true);
+      
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory == null) {
+        // User canceled the picker
+        return;
+      }
+      File file = File("$selectedDirectory/survey_of_$userId");
+      await file.writeAsString(surveyDataCSV);
+      _showMessage("File has been succesfully exported");
+      
+    } catch (e) {
+      _showMessage('Failed to export surveys');
+    } finally {
+      setState(() => _exporting = false);
+    }
+  }
+
+  
+
+  Future<void> _exportRecordings() async {
+    setState(() => _exporting = true);
+
+    try {
+      SurveyData surveyData = context.read<SurveyData>();
+      final userId = surveyData.userId;
+      
+      RecordingCsvStorage storage = RecordingCsvStorage();
+
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory == null) {
+        // User canceled the picker
+        return;
+      }
+
+      await storage.copyToOther(userId: userId, dirPath: selectedDirectory);
+      _showMessage('Recordings exported');
+    } catch (e) {
+      _showMessage('Failed to export recordings');
+    } finally {
+      setState(() => _exporting = false);
+    }
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    messenger?.showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+
+  const _SectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+      child: Text(
+        title,
+        style: Theme.of(context)
+            .textTheme
+            .titleSmall
+            ?.copyWith(color: Colors.grey),
+      ),
     );
   }
 }

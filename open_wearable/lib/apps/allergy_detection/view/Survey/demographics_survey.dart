@@ -155,8 +155,9 @@ class _DemographicSurveyViewState extends State<DemographicSurveyView> {
   void _continueButtonPressed(){
 
     Provider.of<SurveyData>(context, listen: false).setAge(age);
+    
     List<String> allergies = [];
-
+    
     for (Allergy allergy in hayFeverAllergies) {
       //iterate through the allergies to check which is selected and add them to SurveyData
       if (allergy.selected) {
@@ -167,6 +168,13 @@ class _DemographicSurveyViewState extends State<DemographicSurveyView> {
       //trim "other" allergies and add them to the list
       allergies.addAll(allergyInputController.text.split(',').map((s) => s.trim()).toList());
     }
+
+    //add allergies to SurveyData
+    Provider.of<SurveyData>(context,listen: false).setAllergies(allergies);
+
+    //null check gender and add it to SurveyData
+    genderChoice ??= Gender.other;
+    Provider.of<SurveyData>(context, listen: false).setGender(genderChoice!);
 
     // change to next surveyPage
     Navigator.pushNamed(context, '/symptomKnowledgeSurvey');

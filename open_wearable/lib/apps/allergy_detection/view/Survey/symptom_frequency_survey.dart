@@ -44,7 +44,10 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   Widget _build_frequence_Symptoms(){
 
     List<Widget> survey = [];
-    //@TODO cahnge max 
+    for (Symptom symptom in Symptoms.symptomList) {
+      likertScore[symptom] = LikertScale(1);
+    }
+
     for (int i = 0; i < Symptoms.symptomList.length; i++){
       survey.add(Align(
         alignment: Alignment.centerLeft,

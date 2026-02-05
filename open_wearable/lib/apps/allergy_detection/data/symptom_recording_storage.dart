@@ -4,13 +4,13 @@ import 'package:path_provider/path_provider.dart';
 
 class RecordingCsvStorage {
 
-  Future<File> _file(String userId) async {
+  Future<File> getFile(String userId) async {
     final dir = await getApplicationDocumentsDirectory();
-    return File('${dir.path}/$userId');
+    return File('${dir.path}/${getFileName(userId)}');
   }
 
   Future<void> appendRecording(Recording recording) async {
-    final file = await _file(recording.userId);
+    final file = await getFile(recording.userId);
 
     // Write header if file doesn't exist
     if (!await file.exists()) {
@@ -22,7 +22,7 @@ class RecordingCsvStorage {
   }
 
   Future<List<Recording>> readRecordings(String userId) async {
-    final file = await _file(userId);
+    final file = await getFile(userId);
 
     if(!await file.exists()) {
       return [];
@@ -38,4 +38,15 @@ class RecordingCsvStorage {
     }
     return recordings;
   }
+
+  String getFileName(String userId){
+    return "Session_Record_of_$userId.csv";
+  }
+
+  Future<void> copyToOther({required String userId, required String dirPath}) async {
+  (await getFile(userId)).copy("$dirPath/${getFileName(userId)}");
+  }
+
 }
+
+

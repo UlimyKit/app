@@ -1,5 +1,6 @@
 
 
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
 import 'package:open_wearable/apps/allergy_detection/data/user_survey_storage.dart';
@@ -43,7 +44,7 @@ class SurveyData with ChangeNotifier{
     notifyListeners();
   }
 
-  void setAllergiess(List<String> allergies) {
+  void setAllergies(List<String> allergies) {
     this.allergies = allergies;
     allergiesFilled = allergies.isNotEmpty;
     notifyListeners();
@@ -141,4 +142,13 @@ class SurveyData with ChangeNotifier{
   await storage.save(userId, toJson());
   }
 
+  
+
+  String toCSV(bool withHeader) {
+    String csv = "UserID:$userId\nAge:$age\nGender:${gender.toString().split('.').last}\nAllergies:${allergies.join("|")}";
+    csv = "$csv\nKnownledge of Symptoms:${knownSymptoms.entries.map((ks) => "${ks.key.name}=${ks.value.value}").join(', ')}";
+    csv = "$csv\nFrequence of Symptoms:${frequenceSymptoms.entries.map((ks) => "${ks.key.name}=${ks.value.value}").join(', ')}";
+    csv = "$csv\nCurrent Symptoms:${currentSymptoms.entries.map((ks) => "${ks.key.name}=${ks.value.value}").join(', ')}";
+    return csv;
+  }
 }

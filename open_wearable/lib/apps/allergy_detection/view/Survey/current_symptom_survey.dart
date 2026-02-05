@@ -42,7 +42,9 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
 
   Widget _buildCurrentSymptomsList(){
     List<Widget> survey = [];
-
+    for (Symptom symptom in Symptoms.symptomList) {
+      likertScore[symptom] = LikertScale(1);
+    }
     for (int i = 0; i < Symptoms.symptomList.length; i++){
       survey.add(
         Align(alignment: Alignment.centerLeft,
