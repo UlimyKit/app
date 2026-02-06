@@ -26,10 +26,10 @@ class _SettingsPageState extends State<SettingsPage> {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: const Text('Settings'),
-        leading: PlatformIconButton(
-          icon: Icon(context.platformIcons.clear), 
+        trailingActions: [PlatformIconButton(
+          icon: Icon(context.platformIcons.clear, color: Colors.red, size: 32,), 
           onPressed: exitAppDialog,
-        ),
+        ),]
       ),
       body: PlatformWidget(
         material: (_, __) => _buildMaterial(),
@@ -108,9 +108,9 @@ class _SettingsPageState extends State<SettingsPage> {
         // User canceled the picker
         return;
       }
-      File file = File("$selectedDirectory/survey_of_$userId");
+      File file = File("$selectedDirectory/survey_of_$userId.csv");
       await file.writeAsString(surveyDataCSV);
-      _showMessage("File has been succesfully exported");
+      _showMessage("Survey File has been succesfully exported");
       
     } catch (e) {
       _showMessage('Failed to export surveys');
@@ -138,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
       }
 
       await storage.copyToOther(userId: userId, dirPath: selectedDirectory);
-      _showMessage('Recordings exported');
+      _showMessage('Recordings File has been succesfully exported');
     } catch (e) {
       _showMessage('Failed to export recordings');
     } finally {

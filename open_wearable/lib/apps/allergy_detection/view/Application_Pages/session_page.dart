@@ -173,7 +173,7 @@ class _SessionPageState extends State<SessionPage> {
                     Navigator.pop(context); // close dialog
                   }
                 },
-                child: Text('Add'),
+                child: Text('Edit'),
               ),
             ],
           );
@@ -186,7 +186,7 @@ class _SessionPageState extends State<SessionPage> {
 
   Future<void> _showAddSymptomDialog() async {
   Symptom? selectedSymptom;
-  TimeOfDay? selectedTime;
+  TimeOfDay? selectedTime = TimeOfDay.now();
 
   await showDialog(
     context: context,
