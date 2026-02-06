@@ -26,6 +26,10 @@ class _SettingsPageState extends State<SettingsPage> {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: const Text('Settings'),
+        leading: PlatformIconButton(
+          icon: Icon(context.platformIcons.clear), 
+          onPressed: exitAppDialog,
+        ),
       ),
       body: PlatformWidget(
         material: (_, __) => _buildMaterial(),
@@ -147,6 +151,30 @@ class _SettingsPageState extends State<SettingsPage> {
     messenger?.showSnackBar(
       SnackBar(content: Text(message)),
     );
+  }
+
+  void exitAppDialog() async{
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+      title: const Text('Exit App?'),
+      content: const Text('Make sure to save your session.'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancel'),
+          ),
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: const Text('Exit'),
+          ),
+        ],
+      ),
+    );
+    if (shouldExit == true) {
+      navigator.pop();
+    }
   }
 }
 

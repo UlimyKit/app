@@ -19,6 +19,13 @@ class _LoginViewState extends State<LoginView> {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: PlatformText("Enter your ID"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+        ),
+
       ),
       body: Center(
         child: Padding(
@@ -60,14 +67,13 @@ class _LoginViewState extends State<LoginView> {
 
     final exists = await surveyData.loadOrCreate(userId);
 
-    if (!mounted) return;
 
     if (exists) {
     // User already exists → resume
-    Navigator.pushReplacementNamed(context, '/currentSymptomSurvey');
+    Navigator.pushNamed(context, '/currentSymptomSurvey');
     } else {
     // New user → start survey
-    Navigator.pushReplacementNamed(context, '/demographicsSurvey');
+    Navigator.pushNamed(context, '/demographicsSurvey');
     }
   }
 
