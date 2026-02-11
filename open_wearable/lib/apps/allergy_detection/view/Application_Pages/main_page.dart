@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:open_earable_flutter/open_earable_flutter.dart';
 import 'package:open_wearable/apps/allergy_detection/controller/recording_handler.dart';
 import 'package:open_wearable/apps/allergy_detection/controller/symptom_detector.dart';
-import 'package:open_wearable/apps/allergy_detection/model/recording_history.dart';
 import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/pollen_flight.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/session_history.dart';
@@ -19,6 +17,7 @@ class MainPage extends StatefulWidget {
   
   const MainPage({super.key, required this.sensorManager, required this.sensorConfigurationProvider});
 
+  @override
   State<MainPage> createState() => _MainPageState();
 }
 
@@ -29,7 +28,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     final recordingHandler = RecordingHandler(userId: context.read<SurveyData>().userId);
     _detector = SymptomDetector(widget.sensorManager, widget.sensorConfigurationProvider, recordingHandler);
@@ -65,7 +63,7 @@ class _MainPageState extends State<MainPage> {
               ),
               NavigationDestination(selectedIcon: Icon(Icons.settings),
                 icon: Icon(Icons.settings_outlined), 
-                label: 'Settings'),
+                label: 'Settings',),
               ],
           
           ),

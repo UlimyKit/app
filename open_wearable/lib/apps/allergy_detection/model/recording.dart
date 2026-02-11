@@ -5,7 +5,6 @@ import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 
 class Recording {
-  final RecordingCsvStorage storage = RecordingCsvStorage();
   final String userId;
   DateTime startingTime;
   DateTime? endingTime;
@@ -59,6 +58,6 @@ class Recording {
   }
 
   void saveRecording(){
-    storage.appendRecording(this);
+    RecordingCsvStorage.appendRecording(this);
   }
 }

@@ -3,7 +3,6 @@ import 'package:open_wearable/apps/allergy_detection/data/symptom_recording_stor
 import 'recording.dart';
 
 class RecordingHistory with ChangeNotifier {
-  final RecordingCsvStorage storage = RecordingCsvStorage();
   String userId;
 
   RecordingHistory({required this.userId});
@@ -13,7 +12,7 @@ class RecordingHistory with ChangeNotifier {
 
   Future<void> loadRecordings(String userId) async { 
     
-    _recordings = await storage.readRecordings(userId);
+    _recordings = await RecordingCsvStorage.readRecordings(userId);
 
     // Sort by startingTime descending (latest first)
     _recordings.sort((a, b) => b.startingTime.compareTo(a.startingTime));

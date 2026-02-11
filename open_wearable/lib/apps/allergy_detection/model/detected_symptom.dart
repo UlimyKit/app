@@ -7,6 +7,6 @@ final TimeOfDay detectionTime;
 
 const DetectedSymptom ({
     required this.symptom,
-    required this.detectionTime
+    required this.detectionTime,
 });
 }

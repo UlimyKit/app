@@ -42,13 +42,6 @@ class Symptoms {
         ],
       ),
   ];
+
   
-  Symptom? symptomFromName(String name) {
-    for (Symptom symptom in Symptoms.symptomList) {
-      if (symptom.name == name) {
-        return symptom;
-      } 
-    }
-    return null;
-  }
 }

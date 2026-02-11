@@ -31,7 +31,7 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
           _buildCurrentSymptomsList(),
           Padding(
             padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 5),
-            child: ElevatedButton(onPressed: _submit_survey, child: const Text('Submit')),
+            child: ElevatedButton(onPressed: _submitSurvey, child: const Text('Submit')),
           )
         ],
       ),
@@ -63,7 +63,7 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
     );
   }
 
-  void _submit_survey() {
+  void _submitSurvey() {
     Provider.of<SurveyData>(context, listen: false).setCurrentSymptoms(likertScore);
     Provider.of<SurveyData>(context, listen: false).saveData();
     Navigator.pushNamedAndRemoveUntil(context, '/mainpage', (route) => false);

@@ -9,7 +9,6 @@ class RecordingHandler extends ChangeNotifier{
   String userId;
   List<DetectedSymptom> _currentlyDetectedSymptoms = [];
 
-
   RecordingHandler({required this.userId});
 
   List<DetectedSymptom> getDetectedSymptoms() {
@@ -80,5 +79,4 @@ class RecordingHandler extends ChangeNotifier{
     return _recording;
   }
 
-  
 }

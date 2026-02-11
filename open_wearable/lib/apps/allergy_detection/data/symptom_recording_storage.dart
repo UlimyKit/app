@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:open_wearable/apps/allergy_detection/model/recording.dart';
 import 'package:path_provider/path_provider.dart';
 
-static class RecordingCsvStorage {
+class RecordingCsvStorage {
 
   static Future<File> getFile(String userId) async {
     final dir = await getApplicationDocumentsDirectory();

@@ -138,8 +138,6 @@ class SurveyData with ChangeNotifier{
   await SurveyStorage.save(userId, toJson());
   }
 
-  
-
   String toCSV(bool withHeader) {
     String csv = "UserID:$userId\nAge:$age\nGender:${gender.toString().split('.').last}\nAllergies:${allergies.join("|")}";
     csv = "$csv\nKnownledge of Symptoms:${knownSymptoms.entries.map((ks) => "${ks.key.name}=${ks.value.value}").join(', ')}";
