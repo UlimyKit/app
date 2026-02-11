@@ -1,15 +1,11 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
-import 'package:file_selector/file_selector.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:open_wearable/apps/allergy_detection/controller/recording_handler.dart';
 import 'package:open_wearable/apps/allergy_detection/data/symptom_recording_storage.dart';
 import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -127,8 +123,6 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       SurveyData surveyData = context.read<SurveyData>();
       final userId = surveyData.userId;
-      
-      RecordingCsvStorage storage = RecordingCsvStorage();
 
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
@@ -137,7 +131,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return;
       }
 
-      await storage.copyToOther(userId: userId, dirPath: selectedDirectory);
+      await RecordingCsvStorage.copyToOther(userId: userId, dirPath: selectedDirectory);
       _showMessage('Recordings File has been succesfully exported');
     } catch (e) {
       _showMessage('Failed to export recordings');

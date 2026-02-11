@@ -25,6 +25,7 @@ class _SessionHistoryPageState extends State<SessionHistoryPage> {
         appBar: AppBar(
           title: const Text('Session History'),
         ),
+        
         body: FutureBuilder<List<Recording>>(
           future: _loadRecordings(),
           builder: (context, snapshot) {
@@ -68,8 +69,7 @@ class _SessionHistoryPageState extends State<SessionHistoryPage> {
   }
 
   Future<List<Recording>> _loadRecordings() async{
-    final storage = RecordingCsvStorage();
-    List<Recording> recordings = await storage.readRecordings(context.read<SurveyData>().userId);
+    List<Recording> recordings = await RecordingCsvStorage.readRecordings(context.read<SurveyData>().userId);
     return recordings;
   }
 }

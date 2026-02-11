@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
 import 'package:open_wearable/apps/allergy_detection/controller/recording_handler.dart';
 import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
-import 'package:open_wearable/apps/allergy_detection/model/recording.dart';
-import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:provider/provider.dart';
 
@@ -117,7 +114,7 @@ class _SessionPageState extends State<SessionPage> {
     await showDialog(
     context: context,
     builder: (BuildContext context) {
-      return StatefulBuilder( // allows setState inside the dialog
+      return StatefulBuilder( 
         builder: (context,setStateDialog) {
           return AlertDialog(
             title: Text('Edit Symptom'),
@@ -191,7 +188,7 @@ class _SessionPageState extends State<SessionPage> {
   await showDialog(
     context: context,
     builder: (BuildContext context) {
-      return StatefulBuilder( // allows setState inside the dialog
+      return StatefulBuilder(
         builder: (context,setStateDialog) {
           return AlertDialog(
             title: Text('Add Symptom'),

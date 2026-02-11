@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/model/recording.dart';
@@ -81,4 +79,6 @@ class RecordingHandler extends ChangeNotifier{
   bool isRecording(){
     return _recording;
   }
+
+  
 }

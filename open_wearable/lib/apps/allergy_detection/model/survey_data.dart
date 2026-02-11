@@ -1,8 +1,4 @@
-
-
-import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:open_wearable/apps/allergy_detection/constants.dart';
 import 'package:open_wearable/apps/allergy_detection/data/user_survey_storage.dart';
 import 'package:open_wearable/apps/allergy_detection/model/gender.dart';
 import 'package:open_wearable/apps/allergy_detection/model/likert_scale.dart';
@@ -125,8 +121,8 @@ class SurveyData with ChangeNotifier{
   Future<bool> loadOrCreate(String userId) async {
     this.userId = userId;
 
-    if (await storage.exists(userId)) {
-      final json = await storage.load(userId);
+    if (await SurveyStorage.exists(userId)) {
+      final json = await SurveyStorage.load(userId);
       if (json != null) {
         fromJson(json);
         return true; // existing user
@@ -139,7 +135,7 @@ class SurveyData with ChangeNotifier{
 
   Future<void> saveData() async {
   if (userId.isEmpty) return;
-  await storage.save(userId, toJson());
+  await SurveyStorage.save(userId, toJson());
   }
 
   

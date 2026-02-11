@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:go_router/go_router.dart';
 import 'package:open_earable_flutter/open_earable_flutter.dart';
 import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/main_page.dart';

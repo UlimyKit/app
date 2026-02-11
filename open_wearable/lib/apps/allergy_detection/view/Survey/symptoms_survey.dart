@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:go_router/go_router.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
 import 'package:open_wearable/apps/allergy_detection/model/likert_scale.dart';
 import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
@@ -34,7 +33,7 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
             Padding(
               padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 5),
               child: Center(
-              child: ElevatedButton(onPressed: _submit_survey, child: const Text('Submit')),
+              child: ElevatedButton(onPressed: _submitSurvey, child: const Text('Submit')),
               ),
             ),
           ],
@@ -69,10 +68,8 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
     );
   }
 
-  void _submit_survey() {
+  void _submitSurvey() {
     Provider.of<SurveyData>(context, listen: false).setKnownSymptoms(likertScore);
     Navigator.pushNamed(context, '/symptomFrequencySurvey');
   }
-
-
 }
