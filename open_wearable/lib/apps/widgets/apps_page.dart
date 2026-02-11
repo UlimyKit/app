@@ -9,6 +9,7 @@ import 'package:open_wearable/apps/posture_tracker/model/earable_attitude_tracke
 import 'package:open_wearable/apps/posture_tracker/view/posture_tracker_view.dart';
 import 'package:open_wearable/apps/widgets/select_earable_view.dart';
 import 'package:open_wearable/apps/widgets/app_tile.dart';
+import 'package:open_wearable/apps/widgets/select_two_earable_view.dart';
 
 
 class AppInfo {
@@ -69,9 +70,10 @@ List<AppInfo> _apps = [
     logoPath: "lib/apps/allergy_detection/assets/AllergyDetectionLogo.png",
     title: "Allergy Detection App",
     description: "Detect symptoms of hayfever",
-    widget: SelectEarableView(startApp: (wearable, sensorConfigProvider) {
-        if (wearable.hasCapability<SensorManager>()) {
-          return AllergyDetectionView(sensorManager: wearable.requireCapability<SensorManager>(), sensorConfigurationProvider: sensorConfigProvider,);
+    widget: SelectTwoEarableView(startApp: (leftwearable, leftSensorConfigProvider, rightWearable, rightSensorConfigProvider) {
+      print("leftwearable:${leftwearable.name} ${rightWearable.name}");
+        if (leftwearable.hasCapability<SensorManager>() && rightWearable.hasCapability<SensorManager>()) {
+          return AllergyDetectionView(sensorManager: leftwearable.requireCapability<SensorManager>(), sensorConfigurationProvider: leftSensorConfigProvider,);
         }else{
           return PlatformScaffold(
             appBar: PlatformAppBar(title: PlatformText("Not a compatible wearable"),),
