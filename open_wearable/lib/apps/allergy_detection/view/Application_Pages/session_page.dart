@@ -22,7 +22,7 @@ class _SessionPageState extends State<SessionPage> {
     var recording = context.watch<RecordingHandler>().isRecording();
 
     return Scaffold(
-      appBar: AppBar(title: Text("SessionPage"),),
+      appBar: AppBar(title: Text("Session"),),
       body: Column(
         children: [
           Expanded(
