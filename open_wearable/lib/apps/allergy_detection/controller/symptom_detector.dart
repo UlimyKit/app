@@ -7,10 +7,18 @@ import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
 
 class SymptomDetector {
   final RecordingHandler _recordingHandler;
-  final SensorManager _sensorManager;
-  final SensorConfigurationProvider _sensorConfigurationProvider;
+  final Wearable _leftWearable;
+  final SensorConfigurationProvider _leftSensorConfigurationProvider;
+  final Wearable _rightWearable;
+  final SensorConfigurationProvider _rightSensorConfigurationProvider;
 
-  SymptomDetector(this._sensorManager, this._sensorConfigurationProvider, this._recordingHandler);
+  SymptomDetector(
+    this._leftWearable,
+    this._leftSensorConfigurationProvider,
+    this._rightWearable,
+    this._rightSensorConfigurationProvider,
+    this._recordingHandler,
+    );
 
   RecordingHandler getRecordingHandler() {
     return _recordingHandler;

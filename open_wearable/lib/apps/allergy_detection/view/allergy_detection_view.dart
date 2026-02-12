@@ -35,7 +35,12 @@ class AllergyDetectionView extends StatelessWidget {
           '/symptomKnowledgeSurvey': (context) => SymptomsSurveyView(),
           '/symptomFrequencySurvey': (context) => SymptomFrequencySurvey(),
           '/currentSymptomSurvey': (context) => CurrentSymptomsSurvey(),
-          '/mainpage': (context) => MainPage(sensorManager: leftWearable.requireCapability<SensorManager>(), sensorConfigurationProvider: leftSensorConfigurationProvider),
+          '/mainpage': (context) => MainPage(
+            leftWearable: leftWearable,
+            leftSensorConfigurationProvider: leftSensorConfigurationProvider,
+            rightWearable: rightWearable,
+            rightSensorConfigurationProvider: rightSensorConfigurationProvider,
+            ),
         },
     ));
   }

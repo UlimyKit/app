@@ -12,10 +12,18 @@ import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   
-  final SensorManager sensorManager;
-  final SensorConfigurationProvider sensorConfigurationProvider;
+  final Wearable leftWearable;
+  final SensorConfigurationProvider leftSensorConfigurationProvider;
+  final Wearable rightWearable;
+  final SensorConfigurationProvider rightSensorConfigurationProvider;
   
-  const MainPage({super.key, required this.sensorManager, required this.sensorConfigurationProvider});
+  const MainPage({super.key,
+  required this.leftWearable,
+  required this.leftSensorConfigurationProvider,
+  required this.rightWearable,
+  required this.rightSensorConfigurationProvider,
+  
+  });
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -30,7 +38,11 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     final recordingHandler = RecordingHandler(userId: context.read<SurveyData>().userId);
-    _detector = SymptomDetector(widget.sensorManager, widget.sensorConfigurationProvider, recordingHandler);
+    _detector = SymptomDetector(widget.leftWearable,
+     widget.leftSensorConfigurationProvider,
+     widget.rightWearable,
+     widget.rightSensorConfigurationProvider,
+      recordingHandler);
 
     
   }
