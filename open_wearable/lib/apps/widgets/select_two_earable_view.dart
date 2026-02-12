@@ -58,8 +58,10 @@ class _SelectTwoEarableViewState extends State<SelectTwoEarableView> {
 
               PlatformElevatedButton(
                 child: PlatformText("Start App"),
-                onPressed: () {
+                onPressed: () async{
                   if (_selectedWearableA != null && _selectedWearableB != null) {
+                    Wearable left = await getLeftWearable();
+                    Wearable right = left == _selectedWearableA! ? _selectedWearableB! : _selectedWearableA!;
                     Navigator.push(
                       context,
                       platformPageRoute(
@@ -67,12 +69,14 @@ class _SelectTwoEarableViewState extends State<SelectTwoEarableView> {
                         builder: (_) {
                           return MultiProvider(
                             providers: [
-                              ChangeNotifierProvider.value(value: wearablesProvider.getSensorConfigurationProvider(_selectedWearableA!)),
-                              ChangeNotifierProvider.value(value: wearablesProvider.getSensorConfigurationProvider(_selectedWearableB!)),
+                              ChangeNotifierProvider.value(value: wearablesProvider.getSensorConfigurationProvider(left)),
+                              ChangeNotifierProvider.value(value: wearablesProvider.getSensorConfigurationProvider(right)),
                             ],
                             child: widget.startApp(
-                              _selectedWearableA!, 
-                              wearablesProvider.getSensorConfigurationProvider(_selectedWearableA!), _selectedWearableB!, wearablesProvider.getSensorConfigurationProvider(_selectedWearableB!),
+                              left, 
+                              wearablesProvider.getSensorConfigurationProvider(left),
+                              right,
+                              wearablesProvider.getSensorConfigurationProvider(right),
                             ),
                           );
                         },
@@ -85,5 +89,18 @@ class _SelectTwoEarableViewState extends State<SelectTwoEarableView> {
           ),
       ),
     );
+  }
+
+  Future<Wearable> getLeftWearable() async{
+    final DevicePosition? position = await _getDevicePosition(_selectedWearableA!);
+    if(position == DevicePosition.left){
+      return _selectedWearableA!;
+    }
+    return _selectedWearableB!;
+  }
+
+  Future<DevicePosition?> _getDevicePosition(Wearable w) async {
+    if (w is! StereoDevice) return null;
+    return await (w as StereoDevice).position;
   }
 }

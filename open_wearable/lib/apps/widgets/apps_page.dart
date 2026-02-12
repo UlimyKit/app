@@ -71,9 +71,21 @@ List<AppInfo> _apps = [
     title: "Allergy Detection App",
     description: "Detect symptoms of hayfever",
     widget: SelectTwoEarableView(startApp: (leftwearable, leftSensorConfigProvider, rightWearable, rightSensorConfigProvider) {
-      print("leftwearable:${leftwearable.name} ${rightWearable.name}");
         if (leftwearable.hasCapability<SensorManager>() && rightWearable.hasCapability<SensorManager>()) {
-          return AllergyDetectionView(sensorManager: leftwearable.requireCapability<SensorManager>(), sensorConfigurationProvider: leftSensorConfigProvider,);
+          final sensorManager = leftwearable.getCapability<SensorManager>();
+          if (sensorManager != null) {
+            sensorManager.sensors.forEach((sensor) {
+              print(sensor.sensorName);
+              print(sensor.relatedConfigurations.length);
+              print(sensor.axisNames);
+            });
+          }
+          return AllergyDetectionView(
+            leftWearable: leftwearable,
+           leftSensorConfigurationProvider: leftSensorConfigProvider,
+           rightWearable: rightWearable,
+           rightSensorConfigurationProvider: rightSensorConfigProvider,
+           );
         }else{
           return PlatformScaffold(
             appBar: PlatformAppBar(title: PlatformText("Not a compatible wearable"),),

@@ -12,11 +12,17 @@ import 'package:provider/provider.dart';
 
 class AllergyDetectionView extends StatelessWidget {
   
-  final SensorManager sensorManager;
-  final SensorConfigurationProvider sensorConfigurationProvider;
+  final Wearable leftWearable;
+  final Wearable rightWearable;
+  final SensorConfigurationProvider leftSensorConfigurationProvider;
+  final SensorConfigurationProvider rightSensorConfigurationProvider;
   
 
-  const AllergyDetectionView({super.key, required this.sensorManager, required this.sensorConfigurationProvider});
+  const AllergyDetectionView({super.key,
+   required this.leftWearable,
+    required this.leftSensorConfigurationProvider,
+    required this.rightWearable,
+    required this.rightSensorConfigurationProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,7 @@ class AllergyDetectionView extends StatelessWidget {
           '/symptomKnowledgeSurvey': (context) => SymptomsSurveyView(),
           '/symptomFrequencySurvey': (context) => SymptomFrequencySurvey(),
           '/currentSymptomSurvey': (context) => CurrentSymptomsSurvey(),
-          '/mainpage': (context) => MainPage(sensorManager: sensorManager,sensorConfigurationProvider: sensorConfigurationProvider),
+          '/mainpage': (context) => MainPage(sensorManager: leftWearable.requireCapability<SensorManager>(), sensorConfigurationProvider: leftSensorConfigurationProvider),
         },
     ));
   }
