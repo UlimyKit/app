@@ -22,7 +22,7 @@ class _SessionPageState extends State<SessionPage> {
     bool recording = context.watch<RecordingHandler>().isRecording();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Session"),),
+      appBar: AppBar(title: Text("Session ${context.watch<RecordingHandler>().currentRecording !=null?context.watch<RecordingHandler>().currentRecording!.sessionId : "Paused"}"),),
       body: Column(
         children: [
           Expanded(

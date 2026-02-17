@@ -67,6 +67,7 @@ class RecordingHandler extends ChangeNotifier{
       _saveRecording();
       _recording = false;
       _currentlyDetectedSymptoms = [];
+      currentRecording = null;
       notifyListeners();
     } else {
       print("stopped recording without starting");
