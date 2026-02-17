@@ -16,7 +16,7 @@ class RecordingHandler extends ChangeNotifier{
   }
 
   void startRecording(){
-    currentRecording = Recording(userId: userId);
+    currentRecording = Recording(userId: userId, startingTime: DateTime.now().toUtc());
     _recording = true;
     notifyListeners();
   }
@@ -51,7 +51,7 @@ class RecordingHandler extends ChangeNotifier{
 
   bool editDetectedSymptom(Symptom symptom, int index) {
     if (_recording) {
-      _currentlyDetectedSymptoms[index] = DetectedSymptom(symptom: symptom, detectionTime: _currentlyDetectedSymptoms[index].detectionTime);
+      _currentlyDetectedSymptoms[index].humanLabel = symptom;
       notifyListeners();
       return true;
     }

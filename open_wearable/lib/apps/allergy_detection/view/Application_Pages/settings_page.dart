@@ -61,6 +61,21 @@ class _SettingsPageState extends State<SettingsPage> {
           trailing: const Icon(Icons.chevron_right),
           onTap: _exporting ? null : _exportRecordings,
         ),
+        const _SectionHeader(title: 'Reset'),
+        ListTile(
+          leading: const Icon(Icons.delete),
+          title: const Text('Delete Data'),
+          subtitle: const Text('Reset the stored data'),
+          trailing: _exporting
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.chevron_right),
+          onTap:_exporting ? null : RecordingCsvStorage.clearDocumentsDirectory, ),
+
+        const Divider(height: 1),
       ],
     );
   }

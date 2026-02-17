@@ -18,10 +18,14 @@ class SymptomDetector {
     this._rightWearable,
     this._rightSensorConfigurationProvider,
     this._recordingHandler,
-    );
+  );
 
   RecordingHandler getRecordingHandler() {
     return _recordingHandler;
   }
+  
   //analyze sensorstream and call _recordingHandler.addSymptom(Symptom symptom)
+  void startDetection() {}
+
+
 }

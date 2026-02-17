@@ -1,12 +1,16 @@
-import 'package:flutter/material.dart';
+import 'dart:core';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 
 class DetectedSymptom {
-final Symptom symptom;
-final TimeOfDay detectionTime;
+Symptom humanLabel;
+Symptom? machineLabel;
+DateTime? detectionStartTime;
+final DateTime detectionEndTime;
 
-const DetectedSymptom ({
-    required this.symptom,
-    required this.detectionTime,
+DetectedSymptom ({
+    required this.humanLabel,
+    this.machineLabel,
+    this.detectionStartTime,
+    required this.detectionEndTime,
 });
 }

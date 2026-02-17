@@ -34,17 +34,17 @@ class _SessionPageState extends State<SessionPage> {
                   color: Colors.grey[200],
                 ),
               child: ListView.builder(
+                reverse: true,
                 itemCount: detectedSymptoms.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    title: Text("${detectedSymptoms[index].symptom.name} at ${detectedSymptoms[index].detectionTime.format(context)}"),
+                    title: Text("${detectedSymptoms[index].humanLabel.name} at ${TimeOfDay.fromDateTime(detectedSymptoms[index].detectionEndTime).format(context)}"),
                     trailing: OverflowBar(
                       overflowAlignment: OverflowBarAlignment.end,
                       spacing: 5,
                       children: <Widget>[
                         ElevatedButton(onPressed: () => recording?_symptomConfirmButton(index):null, child: Icon(Icons.check)),               
                         ElevatedButton(onPressed: () => recording?_symptomEditButton(index):null, child: Icon(Icons.edit)),
-                        ElevatedButton(onPressed: () => recording?_symptomWrongButton(index):null, child: Icon(Icons.close)),
                       ],
                     ),
                   );
@@ -80,8 +80,8 @@ class _SessionPageState extends State<SessionPage> {
     
   }
 
-  void addSymptom(Symptom symptom, TimeOfDay detectionTime) {
-    context.read<RecordingHandler>().addDetectedSymptom(DetectedSymptom(symptom: symptom, detectionTime: detectionTime));
+  void addSymptomInterface(Symptom symptom, DateTime detectionTime) {
+    context.read<RecordingHandler>().addDetectedSymptom(DetectedSymptom(humanLabel: symptom, detectionEndTime: detectionTime));
   }
 
   void _stopRecordingSession(){
@@ -183,7 +183,7 @@ class _SessionPageState extends State<SessionPage> {
 
   Future<void> _showAddSymptomDialog() async {
   Symptom? selectedSymptom;
-  TimeOfDay? selectedTime = TimeOfDay.now();
+  DateTime selectedTime = DateTime.now();
 
   await showDialog(
     context: context,
@@ -233,6 +233,7 @@ class _SessionPageState extends State<SessionPage> {
                 SizedBox(height: 16),
 
                 // Time picker
+                /*
                 Row(
                   children: [
                     Text(
@@ -257,7 +258,7 @@ class _SessionPageState extends State<SessionPage> {
                       child: Text('Pick Time'),
                     ),
                   ],
-                ),
+                ),*/
               ],
             ),
             actions: [
@@ -267,9 +268,9 @@ class _SessionPageState extends State<SessionPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  if (selectedSymptom !=null && selectedTime != null) {
+                  if (selectedSymptom !=null /*&& selectedTime != null*/) {
                     
-                    addSymptom(selectedSymptom!, selectedTime!);
+                    addSymptomInterface(selectedSymptom!, selectedTime!);
                     
                     Navigator.pop(context); // close dialog
                   }

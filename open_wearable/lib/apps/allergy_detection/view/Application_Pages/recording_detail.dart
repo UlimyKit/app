@@ -19,9 +19,9 @@ class RecordingDetailPage extends StatelessWidget {
         itemBuilder: (context, index) {
           final s = symptoms[index];
           return ListTile(
-            title: Text(s.symptom.name),
+            title: Text(s.humanLabel.name),
             subtitle: Text(
-              '${s.symptom.description} at ${s.detectionTime.hour.toString().padLeft(2, '0')}:${s.detectionTime.minute.toString().padLeft(2, '0')}',
+              '${s.humanLabel.description} at ${s.detectionEndTime.hour.toString().padLeft(2, '0')}:${s.detectionEndTime.minute.toString().padLeft(2, '0')}',
             ),
           );
         },
