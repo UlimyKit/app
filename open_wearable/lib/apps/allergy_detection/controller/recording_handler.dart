@@ -8,11 +8,32 @@ class RecordingHandler extends ChangeNotifier{
   Recording? currentRecording;
   String userId;
   List<DetectedSymptom> _currentlyDetectedSymptoms = [];
+  List<DetectedSymptom> _symptomNotifications = [];
 
   RecordingHandler({required this.userId});
 
   List<DetectedSymptom> getDetectedSymptoms() {
     return _currentlyDetectedSymptoms;
+  }
+
+  List<DetectedSymptom> getSymptomNotifications() {
+    return _symptomNotifications;
+  }
+
+  void addSymptomNotification(DetectedSymptom symptom) {
+    _symptomNotifications.add(symptom);
+    notifyListeners();
+  }
+
+  void editAndConfirmNotifiedSymptom(Symptom symptom, int index) {
+    _symptomNotifications[index].humanLabel = symptom;
+    confirmSymptomNotification(index);
+  }
+
+  void confirmSymptomNotification(int index){
+    _currentlyDetectedSymptoms.add(_symptomNotifications[index]);
+    _symptomNotifications.removeAt(index);
+    notifyListeners();
   }
 
   void startRecording(){
@@ -30,25 +51,6 @@ class RecordingHandler extends ChangeNotifier{
     return false;
   }
 
-  bool confirmSymptom(int index) {
-    if (_recording){
-      currentRecording!.addDetectedSymptom(_currentlyDetectedSymptoms[index]);
-      _currentlyDetectedSymptoms.removeAt(index);
-      notifyListeners();
-      return true;
-    }
-    return false;
-  }
-
-  bool deleteDetectedSymptom(int index) {
-    if (_recording) {
-      _currentlyDetectedSymptoms.removeAt(index);
-      notifyListeners();
-      return true;
-    }
-    return false;
-  }
-
   bool editDetectedSymptom(Symptom symptom, int index) {
     if (_recording) {
       _currentlyDetectedSymptoms[index].humanLabel = symptom;
@@ -57,6 +59,7 @@ class RecordingHandler extends ChangeNotifier{
     }
     return false;
   }
+
 
   void stopRecording() {
     if (currentRecording != null) {
@@ -72,6 +75,9 @@ class RecordingHandler extends ChangeNotifier{
   }
 
   void _saveRecording(){
+    for ( DetectedSymptom symptom in _currentlyDetectedSymptoms) {
+      currentRecording!.addDetectedSymptom(symptom);
+    }
     currentRecording!.saveRecording();
   }
 
