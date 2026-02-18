@@ -22,51 +22,92 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      appBar: PlatformAppBar(title: PlatformText("Symptom Frequency"),),
-      body: Padding(
-        padding: EdgeInsetsGeometry.fromLTRB(2, 0, 2, 0),
-        child: Column(
-        children: [
-
-          _build_frequence_Symptoms(),
-          Padding(
-            padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 5),
-            child: ElevatedButton(onPressed: _submitSurvey, child: const Text('Submit')),
-          )
-        ],
+      appBar: PlatformAppBar(
+        title: PlatformText("Current symptoms"),
       ),
-      )
-
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+        child: Column(
+          children: [
+            Expanded(child: _buildCurrentSymptomsList()),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: _submitSurvey,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 6, 
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    foregroundColor: Colors.white, 
+                    backgroundColor: Colors.blueAccent, 
+                  ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(
+                          color: Colors.white, // font color
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _build_frequence_Symptoms(){
-    SurveyData surveyData = Provider.of<SurveyData>(context, listen: false);
+
+  Widget _buildCurrentSymptomsList() {
     List<Widget> survey = [];
+
+    final surveyData = Provider.of<SurveyData>(context, listen: false);
+
     for (Symptom symptom in Symptoms.symptomList) {
-      likertScore[symptom] = LikertScale(1);
+      likertScore[symptom] ??= LikertScale(1);
+
+      survey.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          child: Text(
+            "You recently experienced ${symptom.name}\n(${symptom.description})",
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+      );
+
+      survey.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: LikertChoice(
+            initialScore: surveyData.frequenceSymptoms[symptom]?.value ?? 1,
+            onScoreChanged: (score) {
+              likertScore[symptom] = LikertScale(score);
+            },
+          ),
+        ),
+      );
     }
 
-    for (int i = 0; i < Symptoms.symptomList.length; i++){
-      survey.add(Align(
-        alignment: Alignment.centerLeft,
-        child:Text("You experience ${Symptoms.symptomList[i].name} frequently\n(${Symptoms.symptomList[i].description})",
-        textAlign: TextAlign.left,)));
-      LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
-        likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
-      },initialScore: surveyData.frequenceSymptoms[Symptoms.symptomList[i]]!.value,);
-      survey.add(symptomWidget);
-  
-    }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return ListView(
       children: survey,
     );
   }
 
   void _submitSurvey() {
-    Provider.of<SurveyData>(context, listen: false).setFrequenceSymptoms(likertScore);
+    Provider.of<SurveyData>(context, listen: false).addFrequenceSymptoms(likertScore);
     Navigator.pushNamed(context, '/currentSymptomSurvey');
   }
 

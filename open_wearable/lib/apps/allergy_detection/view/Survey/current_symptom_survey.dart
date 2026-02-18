@@ -20,51 +20,93 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return PlatformScaffold(
-      appBar: PlatformAppBar(title: PlatformText("Current symptoms"),),
-      body: Padding(
-        padding: EdgeInsetsGeometry.fromLTRB(2, 0, 2, 0),
-        child: Column(
-        children: [
-
-          _buildCurrentSymptomsList(),
-          Padding(
-            padding: EdgeInsetsGeometry.fromLTRB(5, 20, 5, 5),
-            child: ElevatedButton(onPressed: _submitSurvey, child: const Text('Submit')),
-          )
-        ],
+      appBar: PlatformAppBar(
+        title: PlatformText("Current symptoms"),
       ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+        child: Column(
+          children: [
+            Expanded(child: _buildCurrentSymptomsList()),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: _submitSurvey,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 6, 
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    foregroundColor: Colors.white, 
+                    backgroundColor: Colors.blueAccent, 
+                  ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(
+                          color: Colors.white, // font color
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCurrentSymptomsList(){
+
+  Widget _buildCurrentSymptomsList() {
     List<Widget> survey = [];
+
+    final surveyData = Provider.of<SurveyData>(context, listen: false);
+
     for (Symptom symptom in Symptoms.symptomList) {
-      likertScore[symptom] = LikertScale(1);
-    }
-    for (int i = 0; i < Symptoms.symptomList.length; i++){
-      SurveyData surveyData = Provider.of<SurveyData>(context, listen: false);
+
       survey.add(
-        Align(alignment: Alignment.centerLeft,
-        child:Text("You recently experienced ${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",
-        textAlign: TextAlign.left,)));
-      LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
-        likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
-      }, initialScore: surveyData.currentSymptoms[Symptoms.symptomList[i]]!.value,);
-      survey.add(symptomWidget);
-      
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          child: Text(
+            "You recently experienced ${symptom.name}\n(${symptom.description})",
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+      );
+
+      survey.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: LikertChoice(
+            initialScore: surveyData.currentSymptoms[symptom]?.value ?? 1,
+            onScoreChanged: (score) {
+              likertScore[symptom] = LikertScale(score);
+            },
+          ),
+        ),
+      );
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return ListView(
       children: survey,
     );
   }
 
+
   void _submitSurvey() {
-    Provider.of<SurveyData>(context, listen: false).setCurrentSymptoms(likertScore);
+    Provider.of<SurveyData>(context, listen: false).addCurrentSymptoms(likertScore);
     Provider.of<SurveyData>(context, listen: false).saveData();
     Navigator.pushNamedAndRemoveUntil(context, '/mainpage', (route) => false);
   }

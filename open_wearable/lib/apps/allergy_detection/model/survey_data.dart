@@ -22,14 +22,6 @@ class SurveyData with ChangeNotifier{
   bool frequenceSymptomsFilled = false;
   bool currentSymptomsFilled = false;
 
-  SurveyData() {
-    for (Symptom symptom in Symptoms.symptomList){
-      knownSymptoms[symptom] = LikertScale(1);
-      frequenceSymptoms[symptom] = LikertScale(1);
-      currentSymptoms[symptom] = LikertScale(1);
-    }
-  }
-
   void setUserId(String userId) {
     this.userId = userId;
     userIdFilled = userId.trim().isNotEmpty;
@@ -54,20 +46,27 @@ class SurveyData with ChangeNotifier{
     notifyListeners();
   }
 
-  void setKnownSymptoms(Map<Symptom,LikertScale> knownSymptoms) {
-    this.knownSymptoms = knownSymptoms;
+  void addKnownSymptoms(Map<Symptom,LikertScale> knownSymptoms) {
+    knownSymptoms.forEach((key,value) {
+      this.knownSymptoms[key] = value;
+    });
     knownSymptomsFilled = knownSymptoms.isNotEmpty;
     notifyListeners();
 
   }
 
-  void setFrequenceSymptoms(Map<Symptom,LikertScale> frequenceSymptoms) {
-    this.frequenceSymptoms = frequenceSymptoms;
+  void addFrequenceSymptoms(Map<Symptom,LikertScale> frequenceSymptoms) {
+    frequenceSymptoms.forEach((key,value) {
+      this.frequenceSymptoms[key] = value;
+    });
     frequenceSymptomsFilled = frequenceSymptoms.isNotEmpty;
     notifyListeners();
   }
-  void setCurrentSymptoms(Map<Symptom,LikertScale> currentSymptoms) {
-    this.currentSymptoms = currentSymptoms;
+
+  void addCurrentSymptoms(Map<Symptom,LikertScale> currentSymptoms) {
+    currentSymptoms.forEach((key,value) {
+      this.currentSymptoms[key] = value;
+    });
     currentSymptomsFilled = currentSymptoms.isNotEmpty;
     notifyListeners();
   }
