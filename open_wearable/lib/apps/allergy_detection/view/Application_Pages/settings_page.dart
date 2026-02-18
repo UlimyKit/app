@@ -96,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
         CupertinoListTile(
           leading: const Icon(CupertinoIcons.mic),
           title: const Text('Export recordings'),
-          subtitle: const Text('Save audio files'),
+          subtitle: const Text('Save recording file'),
           trailing: const CupertinoListTileChevron(),
           onTap: _exporting ? null : _exportRecordings,
         ),

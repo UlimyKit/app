@@ -21,8 +21,10 @@ class RecordingHandler extends ChangeNotifier{
   }
 
   void addSymptomNotification(DetectedSymptom symptom) {
+    if (isRecording()){
     _symptomNotifications.add(symptom);
     notifyListeners();
+    }
   }
 
   void editAndConfirmNotifiedSymptom(Symptom symptom, int index) {
@@ -67,6 +69,7 @@ class RecordingHandler extends ChangeNotifier{
       _saveRecording();
       _recording = false;
       _currentlyDetectedSymptoms = [];
+      _symptomNotifications = [];
       currentRecording = null;
       notifyListeners();
     } else {

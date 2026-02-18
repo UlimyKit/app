@@ -1,5 +1,3 @@
-
-import 'package:flutter/material.dart';
 import 'package:open_wearable/apps/allergy_detection/data/symptom_recording_storage.dart';
 import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';

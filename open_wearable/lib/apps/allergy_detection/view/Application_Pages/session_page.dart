@@ -20,7 +20,6 @@ class _SessionPageState extends State<SessionPage> {
     List<DetectedSymptom> detectedSymptoms = context.watch<RecordingHandler>().getDetectedSymptoms();
     List<DetectedSymptom> symptomNotifications = context.watch<RecordingHandler>().getSymptomNotifications();
     bool recording = context.watch<RecordingHandler>().isRecording();
-
     return Scaffold(
       appBar: AppBar(title: Text("Session ${context.watch<RecordingHandler>().currentRecording !=null?context.watch<RecordingHandler>().currentRecording!.sessionId : "Paused"}"),),
       body: Column(
@@ -51,9 +50,10 @@ class _SessionPageState extends State<SessionPage> {
                                 );
                              },
                           ),
+                          if (symptomNotifications.isNotEmpty)
                           ListView.builder(
                             itemCount: symptomNotifications.length,
-                            // Innerhalb des ListView.builder
+                            
                             itemBuilder: (context, index) {
                               final symptom = symptomNotifications[index];
                               return Card(
@@ -62,25 +62,27 @@ class _SessionPageState extends State<SessionPage> {
                                 ),
                                 elevation: 2,
                                 child: Container(
-                                  width: double.infinity, // volle Breite der Overlay-Container
+                                  width: double.infinity, 
                                   padding: const EdgeInsets.all(12),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        symptom.humanLabel.name,
+                                        symptom.detectionStartTime == null? 
+                                        "${symptom.humanLabel.name} at ${TimeOfDay.fromDateTime(symptom.detectionEndTime).format(context)}" 
+                                        : "${symptom.humanLabel.name} between ${TimeOfDay.fromDateTime(symptom.detectionStartTime!).format(context)} and ${TimeOfDay.fromDateTime(symptom.detectionEndTime).format(context)}",
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(height: 4), // small space between label and description
-                                      // Description text
+                                      const SizedBox(height: 4), 
+                                      
                                       Text(
                                         symptom.humanLabel.description,
                                         style: const TextStyle(
                                           fontSize: 14,
-                                          color: Colors.grey, // lighter color for description
+                                          color: Colors.grey, 
                                         ),
                                       ),
                                       const SizedBox(height: 10),
@@ -89,15 +91,18 @@ class _SessionPageState extends State<SessionPage> {
                                         children: [
                                           ElevatedButton(
                                             onPressed: () => context.read<RecordingHandler>().confirmSymptomNotification(index),
-                                            child: const Text("Bestätigen"),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                            ),
+                                            child: const Text("Confirm"),
                                           ),
                                           const SizedBox(width: 10),
                                           ElevatedButton(
                                             onPressed: () => _showEditSymptomDialog(context.read<RecordingHandler>().editAndConfirmNotifiedSymptom,index),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.green,
+                                              backgroundColor: Colors.yellow,
                                             ),
-                                            child: const Text("Ändern"),
+                                            child: const Text("Edit"),
                                           ),
                                         ],
                                       ),
@@ -139,6 +144,7 @@ class _SessionPageState extends State<SessionPage> {
                   ),
                   child: const Icon(Icons.add, size: 32),
                 ),
+                ElevatedButton(onPressed: () => context.read<RecordingHandler>().addSymptomNotification(DetectedSymptom(humanLabel: Symptoms.symptomList[0],detectionEndTime: DateTime.now())), child: Icon(Icons.ac_unit)),
               ],
             )
           )
@@ -153,7 +159,7 @@ class _SessionPageState extends State<SessionPage> {
     
   }
 
-  void addSymptomInterface(Symptom symptom, DateTime detectionTime) {
+  void addSymptomHuman(Symptom symptom, DateTime detectionTime) {
     context.read<RecordingHandler>().addDetectedSymptom(DetectedSymptom(humanLabel: symptom, detectionEndTime: detectionTime));
   }
 
@@ -219,7 +225,7 @@ class _SessionPageState extends State<SessionPage> {
                         onEditingComplete: () {
                           // prevent invalid text
                           final match = Symptoms.symptomList.any(
-                              (s) => s.name == controller.text);
+                              (s) => s.name == controller.text,);
                           if (!match) {
                             controller.clear();
                             selectedSymptom = null;
@@ -243,7 +249,7 @@ class _SessionPageState extends State<SessionPage> {
                     Navigator.pop(context); // close dialog
                   }
                 },
-                child: Text('Edit'),
+                child: Text('Confirm'),
               ),
             ],
           );
@@ -263,7 +269,7 @@ class _SessionPageState extends State<SessionPage> {
       return StatefulBuilder(
         builder: (context,setStateDialog) {
           return AlertDialog(
-            title: Text('Add Symptom'),
+            title: Text("Add Symptom"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -287,7 +293,7 @@ class _SessionPageState extends State<SessionPage> {
                         controller: controller,
                         focusNode: focusNode,
                         decoration: InputDecoration(
-                          labelText: 'Symptom',
+                          labelText: "Symptom",
                           border: OutlineInputBorder(),
                         ),
                         onEditingComplete: () {
@@ -308,18 +314,18 @@ class _SessionPageState extends State<SessionPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context), // cancel
-                child: Text('Cancel'),
+                child: Text("Cancel"),
               ),
               ElevatedButton(
                 onPressed: () {
                   if (selectedSymptom !=null ) {
                     
-                    addSymptomInterface(selectedSymptom!, selectedTime);
+                    addSymptomHuman(selectedSymptom!, selectedTime);
                     
                     Navigator.pop(context); // close dialog
                   }
                 },
-                child: Text('Add'),
+                child: Text("Add"),
               ),
             ],
           );
