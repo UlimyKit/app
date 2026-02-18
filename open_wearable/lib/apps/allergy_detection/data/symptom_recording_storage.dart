@@ -94,9 +94,25 @@ class RecordingCsvStorage {
     return recordings;
   }
 
-  static Future<void> copyToOther({required String userId, required String dirPath}) async {
-  (await getFile(userId)).copy("$dirPath/${getFileName(userId)}");
-  }
+  static Future<void> copyToOther(String userId, String dirPath) async {
+    final sourceFile = await getFile(userId);
+    String targetPath = "$dirPath/${getFileName(userId)}";
+    final targetFile = File(targetPath);
+
+    // Make sure the directory exists
+    await Directory(dirPath).create(recursive: true);
+
+    // Delete target if it exists (overwrite safely)
+    if (await targetFile.exists()) {
+      final now = DateTime.now();
+      final timestamp =
+        "${now.year}${now.day.toString().padLeft(2, '0')}${now.month.toString().padLeft(2, '0')}"
+        "_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+      targetPath = "$dirPath/${getFileName(userId) }-$timestamp";
+    }
+    await sourceFile.copy(targetPath);
+}
+
 
   static Future<void> clearDocumentsDirectory() async {
     try {

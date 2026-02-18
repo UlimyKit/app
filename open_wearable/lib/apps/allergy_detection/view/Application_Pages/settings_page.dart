@@ -146,10 +146,11 @@ class _SettingsPageState extends State<SettingsPage> {
         return;
       }
 
-      await RecordingCsvStorage.copyToOther(userId: userId, dirPath: selectedDirectory);
+      await RecordingCsvStorage.copyToOther(userId, selectedDirectory);
       _showMessage('Recordings File has been succesfully exported');
     } catch (e) {
       _showMessage('Failed to export recordings');
+      print(e);
     } finally {
       setState(() => _exporting = false);
     }
