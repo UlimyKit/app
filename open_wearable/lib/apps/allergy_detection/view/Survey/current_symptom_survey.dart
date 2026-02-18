@@ -35,8 +35,7 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
           )
         ],
       ),
-      )
-,
+      ),
     );
   }
 
@@ -46,13 +45,14 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
       likertScore[symptom] = LikertScale(1);
     }
     for (int i = 0; i < Symptoms.symptomList.length; i++){
+      SurveyData surveyData = Provider.of<SurveyData>(context, listen: false);
       survey.add(
         Align(alignment: Alignment.centerLeft,
         child:Text("You recently experienced ${Symptoms.symptomList[i].name} \n(${Symptoms.symptomList[i].description})",
         textAlign: TextAlign.left,)));
       LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
         likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
-      },);
+      }, initialScore: surveyData.currentSymptoms[Symptoms.symptomList[i]]!.value,);
       survey.add(symptomWidget);
       
     }

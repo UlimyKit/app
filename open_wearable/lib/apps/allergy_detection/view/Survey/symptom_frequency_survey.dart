@@ -41,7 +41,7 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
   }
 
   Widget _build_frequence_Symptoms(){
-
+    SurveyData surveyData = Provider.of<SurveyData>(context, listen: false);
     List<Widget> survey = [];
     for (Symptom symptom in Symptoms.symptomList) {
       likertScore[symptom] = LikertScale(1);
@@ -54,7 +54,7 @@ class _SymptomFrequencySurveyState extends State<SymptomFrequencySurvey> {
         textAlign: TextAlign.left,)));
       LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
         likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
-      },);
+      },initialScore: surveyData.frequenceSymptoms[Symptoms.symptomList[i]]!.value,);
       survey.add(symptomWidget);
   
     }

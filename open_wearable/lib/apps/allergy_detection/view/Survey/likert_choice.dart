@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class LikertChoice extends StatefulWidget{
   final Function(int) onScoreChanged;
-  LikertChoice({super.key, required this.onScoreChanged});
+  final int initialScore;
+  LikertChoice({super.key, required this.onScoreChanged, required this.initialScore});
 
   @override
   State<LikertChoice> createState() {
@@ -12,7 +13,13 @@ class LikertChoice extends StatefulWidget{
 
 class _LikertChoiceState extends State<LikertChoice> {
 
-  int score = 1;
+  int score = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    score = widget.initialScore;
+  }
 
   @override
   Widget build(BuildContext context) {

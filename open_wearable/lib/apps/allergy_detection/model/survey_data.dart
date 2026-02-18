@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:open_wearable/apps/allergy_detection/constants.dart';
 import 'package:open_wearable/apps/allergy_detection/data/user_survey_storage.dart';
 import 'package:open_wearable/apps/allergy_detection/model/gender.dart';
 import 'package:open_wearable/apps/allergy_detection/model/likert_scale.dart';
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 
 class SurveyData with ChangeNotifier{
-  final SurveyStorage storage = SurveyStorage();
   String userId = "";
   int age = -1;
   Gender gender = Gender.other;
@@ -21,6 +21,14 @@ class SurveyData with ChangeNotifier{
   bool knownSymptomsFilled = false;
   bool frequenceSymptomsFilled = false;
   bool currentSymptomsFilled = false;
+
+  SurveyData() {
+    for (Symptom symptom in Symptoms.symptomList){
+      knownSymptoms[symptom] = LikertScale(1);
+      frequenceSymptoms[symptom] = LikertScale(1);
+      currentSymptoms[symptom] = LikertScale(1);
+    }
+  }
 
   void setUserId(String userId) {
     this.userId = userId;

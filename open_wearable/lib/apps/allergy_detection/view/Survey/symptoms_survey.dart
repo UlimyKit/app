@@ -44,7 +44,7 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   }
 
   Widget _build_known_Symptoms(){
-
+    SurveyData surveyData = Provider.of<SurveyData>(context, listen: false);
     List<Widget> survey = [];
 
     for (Symptom symptom in Symptoms.symptomList) {
@@ -58,7 +58,7 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
         textAlign: TextAlign.left,)));
       LikertChoice symptomWidget = LikertChoice(onScoreChanged: (score) {
         likertScore[Symptoms.symptomList[i]] = LikertScale(score); 
-      },);
+      },initialScore: surveyData.knownSymptoms[Symptoms.symptomList[i]]!.value,);
       survey.add(symptomWidget);
     }
 
