@@ -39,8 +39,13 @@ class _SessionHistoryPageState extends State<SessionHistoryPage> {
             if (recordings.isEmpty) {
               return const Center(child: Text('No recordings found'));
             }
-            return ListView.builder(
+            return ListView.separated(
               itemCount: recordings.length,
+              separatorBuilder: (context, index) => const Divider(
+                  color: Colors.grey,
+                  thickness: 0.5,
+                  height: 1,
+                ),
               itemBuilder: (context, index) {
                 final rec = recordings[index];
                 return ListTile(
