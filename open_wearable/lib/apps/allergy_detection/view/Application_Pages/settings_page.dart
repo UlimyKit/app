@@ -22,10 +22,6 @@ class _SettingsPageState extends State<SettingsPage> {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: const Text('Settings'),
-        trailingActions: [PlatformIconButton(
-          icon: Icon(context.platformIcons.clear, color: Colors.red, size: 32,), 
-          onPressed: exitAppDialog,
-        ),]
       ),
       body: PlatformWidget(
         material: (_, __) => _buildMaterial(),
@@ -61,6 +57,7 @@ class _SettingsPageState extends State<SettingsPage> {
           trailing: const Icon(Icons.chevron_right),
           onTap: _exporting ? null : _exportRecordings,
         ),
+        /* // Button to delete all data
         const _SectionHeader(title: 'Reset'),
         ListTile(
           leading: const Icon(Icons.delete),
@@ -75,7 +72,22 @@ class _SettingsPageState extends State<SettingsPage> {
               : const Icon(Icons.chevron_right),
           onTap:_exporting ? null : RecordingCsvStorage.clearDocumentsDirectory, ),
 
-        const Divider(height: 1),
+        const Divider(height: 1),*/
+        const _SectionHeader(title: "Logout"),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListTile(
+            leading: Icon(Icons.logout, color: Colors.red,),
+            title: Text("Logout", selectionColor: Colors.red,),
+            titleAlignment: ListTileTitleAlignment.center,
+            horizontalTitleGap: 10,
+            onTap: exitAppDialog,
+            )
+        ),
       ],
     );
   }
