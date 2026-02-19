@@ -156,7 +156,6 @@ class _SessionPageState extends State<SessionPage> {
 
   void _symptomEditButton(int index) {
     _showEditSymptomDialog(editDetectedSymptom,index);
-    
   }
 
   void addSymptomHuman(Symptom symptom, DateTime detectionTime) {
@@ -171,12 +170,43 @@ class _SessionPageState extends State<SessionPage> {
     context.read<RecordingHandler>().startRecording();
   }
 
-  void _pressedPlayButton(){
+  Future<void> _pressedPlayButton() async {
     if (!context.read<RecordingHandler>().isRecording()){
-      _startRecordingSession();
+        _startRecordingSession();
     } else {
+      if ( await _stopSessionDialog()) {
       _stopRecordingSession();
+      }
     }
+  }
+
+  Future<bool> _stopSessionDialog() async{
+    final shouldStopSession = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+      title: const Text('Finish the session?'),
+      content: const Text('This will stop and save the session, but not the unaccepted notifications.'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: const Text('Stop and save session'),
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.red, // red background
+            foregroundColor: Colors.white, // text color
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8), // optional rounded corners
+            ),
+          )
+          ),
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+    return shouldStopSession!;
   }
 
   void editDetectedSymptom(Symptom symptom, int index) {
