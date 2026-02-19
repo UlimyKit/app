@@ -77,7 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Container(
           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: 20),
+            color: Colors.red.withAlpha(30),
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
