@@ -28,6 +28,20 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
         padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
         child: Column(
           children: [
+            Text(
+              "Please complete the following survey to help us understand your current symptomes.",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 5), 
+            const Divider(
+              color: Colors.grey,      
+              thickness: 1,            
+              height: 1,               
+            ),
             Expanded(child: _buildCurrentSymptomsList()),
             
             Padding(
@@ -79,9 +93,22 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
       survey.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-          child: Text(
-            "You recently experienced ${symptom.name}\n(${symptom.description})",
-            style: const TextStyle(fontSize: 16),
+          child: Text.rich(
+            TextSpan(
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+              children: [
+                TextSpan(
+                  text: "You recently experienced the symptom ",
+                ),
+                TextSpan(
+                  text: "${symptom.name}",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: ".\n(${symptom.description})",
+                ),
+              ],
+            ),
           ),
         ),
       );
