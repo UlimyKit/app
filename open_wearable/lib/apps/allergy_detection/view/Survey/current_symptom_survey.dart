@@ -135,6 +135,6 @@ class _CurrentSymptomsSurveyState extends State<CurrentSymptomsSurvey> {
   void _submitSurvey() {
     Provider.of<SurveyData>(context, listen: false).addCurrentSymptoms(likertScore);
     Provider.of<SurveyData>(context, listen: false).saveData();
-    Navigator.pushNamedAndRemoveUntil(context, '/mainpage', (route) => false);
+    Navigator.pushNamed(context, '/summarypage');
   }
 }

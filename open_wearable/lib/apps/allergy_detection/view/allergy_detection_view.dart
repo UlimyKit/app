@@ -5,6 +5,7 @@ import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/main
 import 'package:open_wearable/apps/allergy_detection/view/Survey/current_symptom_survey.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/demographics_survey.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/login_view.dart';
+import 'package:open_wearable/apps/allergy_detection/view/Survey/survery_summary_page.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/symptom_frequency_survey.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Survey/symptoms_survey.dart';
 import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
@@ -35,6 +36,7 @@ class AllergyDetectionView extends StatelessWidget {
           '/symptomKnowledgeSurvey': (context) => SymptomsSurveyView(),
           '/symptomFrequencySurvey': (context) => SymptomFrequencySurvey(),
           '/currentSymptomSurvey': (context) => CurrentSymptomsSurvey(),
+          '/summarypage': (context) => SurveySummaryPage(),
           '/mainpage': (context) => MainPage(
             leftWearable: leftWearable,
             leftSensorConfigurationProvider: leftSensorConfigurationProvider,
