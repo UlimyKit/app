@@ -38,8 +38,12 @@ class _SessionPageState extends State<SessionPage> {
                             itemCount: detectedSymptoms.length,
                             itemBuilder: (BuildContext context, int index) {
                               var reverseIndex = detectedSymptoms.length - 1 - index;
-                                return ListTile(
-                                  title: Text("${detectedSymptoms[reverseIndex].humanLabel.name} at ${TimeOfDay.fromDateTime(detectedSymptoms[reverseIndex].detectionEndTime).format(context)}"),
+                              var symptom = detectedSymptoms[reverseIndex];
+                              final backgroundColor = symptom.machineLabel != null ? Colors.black.withAlpha(20) : Colors.yellow.withAlpha(70);
+                                return Container(
+                                  color: backgroundColor,
+                                  child: ListTile(
+                                  title: Text("${symptom.humanLabel.name} at ${TimeOfDay.fromDateTime(symptom.detectionEndTime).format(context)}"),
                                   trailing: OverflowBar(
                                     overflowAlignment: OverflowBarAlignment.end,
                                     spacing: 5,
@@ -47,15 +51,16 @@ class _SessionPageState extends State<SessionPage> {
                                       ElevatedButton(onPressed: () => recording?_symptomEditButton(reverseIndex):null, child: Icon(Icons.edit)),
                                     ],
                                   ),
+                                )
                                 );
                              },
                           ),
                           if (symptomNotifications.isNotEmpty)
                           ListView.builder(
                             itemCount: symptomNotifications.length,
-                            
                             itemBuilder: (context, index) {
                               final symptom = symptomNotifications[index];
+
                               return Card(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -99,9 +104,6 @@ class _SessionPageState extends State<SessionPage> {
                                           const SizedBox(width: 10),
                                           ElevatedButton(
                                             onPressed: () => _showEditSymptomDialog(context.read<RecordingHandler>().editAndConfirmNotifiedSymptom,index),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.yellow,
-                                            ),
                                             child: const Text("Edit"),
                                           ),
                                         ],
@@ -144,7 +146,7 @@ class _SessionPageState extends State<SessionPage> {
                   ),
                   child: const Icon(Icons.add, size: 32),
                 ),
-                ElevatedButton(onPressed: () => context.read<RecordingHandler>().addSymptomNotification(DetectedSymptom(humanLabel: Symptoms.symptomList[0],detectionEndTime: DateTime.now())), child: Icon(Icons.ac_unit)),
+                ElevatedButton(onPressed: () => context.read<RecordingHandler>().addSymptomNotification(DetectedSymptom(machineLabel: Symptoms.symptomList[0], humanLabel: Symptoms.symptomList[0],detectionEndTime: DateTime.now())), child: Icon(Icons.ac_unit)),
               ],
             )
           )
@@ -189,7 +191,6 @@ class _SessionPageState extends State<SessionPage> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(dialogContext, true),
-          child: const Text('Stop and save session'),
           style: TextButton.styleFrom(
             backgroundColor: Colors.red, // red background
             foregroundColor: Colors.white, // text color
@@ -197,7 +198,8 @@ class _SessionPageState extends State<SessionPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // optional rounded corners
             ),
-          )
+          ),
+          child: const Text('Stop and save session'),
           ),
         TextButton(
           onPressed: () => Navigator.pop(dialogContext, false),
