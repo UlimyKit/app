@@ -2,6 +2,11 @@ import 'dart:io';
 import 'package:open_wearable/apps/allergy_detection/model/recording.dart';
 import 'package:path_provider/path_provider.dart';
 
+/* 
+static class that saves a recording object to persistent data storage.
+It saves every recording in a file as symtpoms with sessionID userId|sessionID|machinelabel(optional)|humanLabel|Startofsymptomdetection(optional)|EndofSymptomDetection
+it also saves a file for the recordings userId|sessionID|startingTime|endingTime
+*/
 class RecordingCsvStorage {
 
   static Future<File> getSessionsFile() async{
@@ -19,7 +24,7 @@ class RecordingCsvStorage {
 
     // Write header if file doesn't exist
     if (!await file.exists()) {
-      await file.writeAsString('userId|sessionID|machinelabel(optional)|humanLabel|Startofsymptomdetection(optional)|EndofSymptomDetection\n');
+      await file.writeAsString('userID|sessionID|machinelabel(optional)|humanLabel|Startofsymptomdetection(optional)|EndofSymptomDetection\n');
     }
 
     final row = recording.toCsv();
@@ -27,7 +32,7 @@ class RecordingCsvStorage {
 
     final sessionFile = await getSessionsFile();
     if (!await sessionFile.exists()) {
-      await sessionFile.writeAsString('userId|sessionID|startingTime|endingTime\n');
+      await sessionFile.writeAsString('userID|sessionID|startingTime|endingTime\n');
     }
 
     final sessionRow = "${recording.userId},${recording.sessionId},${recording.startingTime.toIso8601String()},${recording.endingTime?.toIso8601String()}\n";
