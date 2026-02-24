@@ -25,7 +25,7 @@ class _SymptomsSurveyViewState extends State<SymptomsSurveyView> {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       appBar: PlatformAppBar(
-        title: PlatformText("Current symptoms"),
+        title: PlatformText("Known symptoms"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
