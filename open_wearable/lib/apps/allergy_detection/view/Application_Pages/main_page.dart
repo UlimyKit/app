@@ -32,25 +32,23 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
 
   int currentPageIndex = 0;
-  late SymptomDetector _detector;
+  late RecordingHandler _recordingHandler;
 
   @override
   void initState() {
     super.initState();
-    final recordingHandler = RecordingHandler(userId: context.read<SurveyData>().userId);
-    _detector = SymptomDetector(widget.leftWearable,
+    SymptomDetector detector = SymptomDetector(widget.leftWearable,
      widget.leftSensorConfigurationProvider,
      widget.rightWearable,
-     widget.rightSensorConfigurationProvider,
-      recordingHandler);
-
+     widget.rightSensorConfigurationProvider);
+    _recordingHandler = RecordingHandler(userId: context.read<SurveyData>().userId, detector: detector);
     
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
-      value: _detector.getRecordingHandler(),
+      value: _recordingHandler,
       child: Scaffold(
           bottomNavigationBar: NavigationBar(
             selectedIndex: currentPageIndex,

@@ -1,3 +1,5 @@
+import 'package:open_wearable/apps/allergy_detection/model/sensor_configuration.dart';
+
 import 'model/symptom.dart';
 
 class Symptoms {
@@ -42,6 +44,16 @@ class Symptoms {
         ],
       ),
   ];
+}
 
-  
+class GlobalSensorConfig {
+
+  static final Map<String, SensorConfig> globalSensorConfigs = {
+  "imu": SensorConfig(sensorName: "imu", sampleRate: 50),
+  "pressure": SensorConfig(sensorName: "pressure", sampleRate: 50),
+  "microphone": SensorConfig(sensorName: "microphone", sampleRate: 48000),
+  "ppg": SensorConfig(sensorName: "ppg", sampleRate: 50),
+  "boneConduction": SensorConfig(sensorName: "boneConduction", sampleRate: 1600),
+  "temperature": SensorConfig(sensorName: "temperature", sampleRate: 8),
+};
 }
