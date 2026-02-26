@@ -10,6 +10,10 @@ import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/sett
 import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
 import 'package:provider/provider.dart';
 
+///
+/// NAvigationBarWidget which contains the 4 pages: SessionPage, SessionHistoryPage, PollenflightPage and SettingsPage
+///
+///
 class MainPage extends StatefulWidget {
   
   final Wearable leftWearable;
@@ -31,6 +35,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
 
+  //holds the pageindex for the current selected navigationpage
   int currentPageIndex = 0;
   late RecordingHandler _recordingHandler;
 

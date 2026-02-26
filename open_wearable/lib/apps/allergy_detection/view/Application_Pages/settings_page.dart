@@ -123,7 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       SurveyData surveyData = context.read<SurveyData>();
       final userId = surveyData.userId;
-      final surveyDataCSV = surveyData.toCSV(true);
+      final surveyDataCSV = surveyData.toCSV();
       
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 

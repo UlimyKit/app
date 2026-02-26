@@ -7,7 +7,7 @@ class Recording {
   final String userId;
   late DateTime startingTime;
   DateTime? endingTime;
-  List<DetectedSymptom> _detectedSymptoms = [];
+  final List<DetectedSymptom> _detectedSymptoms = [];
 
   Recording({required this.userId, required this.startingTime}){
     sessionId = "$userId@${startingTime.toUtc().toIso8601String()}";

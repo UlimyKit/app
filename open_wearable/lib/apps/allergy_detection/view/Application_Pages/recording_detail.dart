@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:open_wearable/apps/allergy_detection/model/recording.dart';
 
-
+///
+/// Page which holds Information of a specific Recording
+///
+///
+///
 class RecordingDetailPage extends StatelessWidget {
   final Recording recording;
 

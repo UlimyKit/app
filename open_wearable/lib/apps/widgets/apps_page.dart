@@ -10,6 +10,7 @@ import 'package:open_wearable/apps/posture_tracker/view/posture_tracker_view.dar
 import 'package:open_wearable/apps/widgets/select_earable_view.dart';
 import 'package:open_wearable/apps/widgets/app_tile.dart';
 import 'package:open_wearable/apps/widgets/select_two_earable_view.dart';
+import 'package:open_wearable/widgets/sensors/configuration/sensor_configuration_view.dart';
 
 
 class AppInfo {
@@ -74,11 +75,17 @@ List<AppInfo> _apps = [
         if (leftwearable.hasCapability<SensorManager>() && rightWearable.hasCapability<SensorManager>()) {
           final sensorManager = leftwearable.getCapability<SensorManager>();
           if (sensorManager != null) {
-            sensorManager.sensors.forEach((sensor) {
+            final microphoneManager = leftwearable.getCapability<MicrophoneManager>();
+            if (microphoneManager != null) {
+              Set<Microphone> microphones = microphoneManager.availableMicrophones;
+              print(microphones);
+              microphoneManager.setMicrophone(microphones.first);
+              
+            }
+            
+            for ( Sensor sensor in sensorManager.sensors) {
               print(sensor.sensorName);
-              print(sensor.relatedConfigurations.length);
-              print(sensor.axisNames);
-            });
+            }
           }
           return AllergyDetectionView(
             leftWearable: leftwearable,

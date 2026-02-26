@@ -6,6 +6,11 @@ import 'package:open_wearable/apps/allergy_detection/model/survey_data.dart';
 import 'package:open_wearable/apps/allergy_detection/view/Application_Pages/recording_detail.dart';
 import 'package:provider/provider.dart';
 
+///
+///
+/// Page which holds gives access to the different recordings
+///
+///
 class SessionHistoryPage extends StatefulWidget {
   const SessionHistoryPage({super.key});
 
@@ -29,6 +34,7 @@ class _SessionHistoryPageState extends State<SessionHistoryPage> {
         body: FutureBuilder<List<Recording>>(
           future: _loadRecordings(),
           builder: (context, snapshot) {
+            //snapshot contains the list of recordings
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -73,6 +79,7 @@ class _SessionHistoryPageState extends State<SessionHistoryPage> {
     );
   }
 
+  /// loads the recordings from the Persitantstorage on each reload
   Future<List<Recording>> _loadRecordings() async{
     List<Recording> recordings = await RecordingCsvStorage.readRecordings(context.read<SurveyData>().userId);
     return recordings;
