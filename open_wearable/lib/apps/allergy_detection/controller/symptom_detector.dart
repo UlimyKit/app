@@ -1,148 +1,195 @@
-
 import 'dart:async';
-
 import 'package:open_earable_flutter/open_earable_flutter.dart';
 import 'package:open_wearable/apps/allergy_detection/constants.dart';
-import 'package:open_wearable/apps/allergy_detection/controller/recording_handler.dart';
-import 'package:open_wearable/apps/allergy_detection/controller/synchornizationevent_logger.dart';
 import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart';
 import 'package:open_wearable/apps/allergy_detection/model/sensor_configuration.dart';
 import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
 
 class SymptomDetector {
-  final Wearable _leftWearable;
-  final SensorConfigurationProvider _leftSensorConfigurationProvider;
-  final Wearable _rightWearable;
-  final SensorConfigurationProvider _rightSensorConfigurationProvider;
-  late DateTime _sessionStartTime;
+  final Wearable leftWearable;
+  final SensorConfigurationProvider leftSensorCfgProvider;
+  final Wearable rightWearable;
+  final SensorConfigurationProvider rightSensorCfgProvider;
   late void Function(DetectedSymptom) onSymptomDetected;
 
+  /// Default sensor ID mapping for OpenEarable v2
+  static const Map<String, String> defaultSensorIdMap = {
+    'imu': "9-Axis IMU",
+    'ppg': "Pulse Oximeter",
+    'temperature': "Skin Temperature Sensor",
+    'pressure': "Ear Canal Pressure Sensor",
+    'bone_conduction': "Bone Conduction Accelerometer",
+    'microphone': "Microphones",
+  };
+
+  late Map<String, SensorConfiguration> _leftSensorIdToCfgMap;
+  late Map<String, SensorConfiguration> _rightSensorIdToCfgMap;
 
   StreamSubscription<SensorValue>? _leftSubscription;
   StreamSubscription<SensorValue>? _rightSubscription;
 
   SymptomDetector(
-    this._leftWearable,
-    this._leftSensorConfigurationProvider,
-    this._rightWearable,
-    this._rightSensorConfigurationProvider,
+    this.leftWearable,
+    this.leftSensorCfgProvider,
+    this.rightWearable,
+    this.rightSensorCfgProvider,
   );
 
-  Future<void> startRecording(String sessionId, DateTime sessionStartTime, void Function(DetectedSymptom) onSymptomDetected) async {
-    this.onSymptomDetected = onSymptomDetected;
-    _configureSensors(sessionId);
-    await setRecordingFilePrefix(sessionId);
-    await _startSyncEvent();
-    _applyConfiguration(_leftWearable, _leftSensorConfigurationProvider, GlobalSensorConfig.globalSensorConfigs);
-    _applyConfiguration(_rightWearable, _rightSensorConfigurationProvider, GlobalSensorConfig.globalSensorConfigs);
-  }
+  void _setConfigProvider(
+    String? sensorId,
+    SensorConfigurationProvider cfgProvider,
+    Map<String, SensorConfiguration<SensorConfigurationValue>>
+        sensorIdToConfigMap,
+    SensorConfig experimentSensorConfig,
+  ) {
+    if (sensorId != null && sensorIdToConfigMap.containsKey(sensorId)) {
+      final cfg = sensorIdToConfigMap[sensorId]!;
 
-  void _configureSensors(String sessionId) {
-    _enableRecordingSensors(_leftWearable, _leftSensorConfigurationProvider);
-    _enableRecordingSensors(_rightWearable, _rightSensorConfigurationProvider);
-  }
+      if (cfg is SensorFrequencyConfiguration) {
+        List<SensorConfigurationValue> values =
+            cfgProvider.getSensorConfigurationValues(cfg, distinct: true);
 
-  Future<void> setRecordingFilePrefix(String prefix) async{
-    if (_leftWearable is! EdgeRecorderManager) {
-      throw Exception(
-        "The left wearable is not an EdgeRecorderManager",
-      );
-    }
+        // Find the closest sample rate
+        final bestMatch = _findBestMatch(values, experimentSensorConfig);
 
-    if (_rightWearable is! EdgeRecorderManager) {
-      throw Exception(
-        "The right wearable is not an EdgeRecorderManager",
-      );
-    }
-
-    await Future.wait([
-      (_leftWearable as EdgeRecorderManager).setFilePrefix("left_$prefix"),
-      (_rightWearable as EdgeRecorderManager).setFilePrefix("right_$prefix"),
-    ]);
-  }
-
-  //analyze sensorstream and call _recordingHandler.addSymptom(Symptom symptom)
-  void _startDetection() {
-
-  }
-
-  Future<void> _startSyncEvent() async{
-    Synchronizer synchronizer = Synchronizer(sessionStartTime: _sessionStartTime);
-
-    if (_leftWearable is SensorManager) {
-        List<Sensor> sensors = (_leftWearable as SensorManager).sensors;
-        for (var sensor in sensors) {
-          if (sensor.sensorName == "OPTICAL_TEMPERATURE_SENSOR") {
-            _leftSubscription = sensor.sensorStream.listen(
-              (SensorValue value) => synchronizer.logSyncLeftEvent(value.timestamp),
-              onDone: () async => await _leftSubscription?.cancel(),
-              onError: (error) async {
-                print('Right streaming error: $error');
-                await _leftSubscription?.cancel();
-              },
-            );
-          }
+        if (bestMatch != null) {
+          cfgProvider.addSensorConfiguration(
+            cfg,
+            bestMatch,
+          );
         }
       }
 
-      if (_rightWearable is SensorManager) {
-        List<Sensor> sensors = (_rightWearable as SensorManager).sensors;
-        for (var sensor in sensors) {
-          if (sensor.sensorName == "OPTICAL_TEMPERATURE_SENSOR") {
-            _rightSubscription = sensor.sensorStream.listen(
-              (SensorValue value) => synchronizer.logSyncRightEvent(value.timestamp),
-              onDone: () async => await _rightSubscription?.cancel(),
-              onError: (error) async {
-                print('Right streaming error: $error');
-                await _rightSubscription?.cancel();
-              },
-            );
-          }
+      // for all sensors enable recording
+      if (cfg is ConfigurableSensorConfiguration) {
+        if (cfg.availableOptions.contains(RecordSensorConfigOption())) {
+          cfgProvider.addSensorConfigurationOption(
+            cfg,
+            RecordSensorConfigOption(),
+          );
         }
-      }
-      await synchronizer.sensorsReady;
-  }
-
-  void _stopDetection() {
-
-  }
-  
-  void _enableRecordingSensors(Wearable wearable, SensorConfigurationProvider configProvider) {
-    SensorManager sensorManager = wearable.requireCapability<SensorManager>();
-
-    for (Sensor sensor in sensorManager.sensors) {
-      List<SensorConfiguration> configurations = sensor.relatedConfigurations;
-
-      for (var configuration in configurations) {
-        if(configuration is ConfigurableSensorConfiguration) {
-          if(configuration.availableOptions.contains(RecordSensorConfigOption())) {
-            configProvider.addSensorConfigurationOption(configuration, RecordSensorConfigOption());
-          }
-        }
-      }
-    }
-  }
-
-  void _applyConfiguration(Wearable wearable, SensorConfigurationProvider configProvider, Map<String, SensorConfig> configs) {
-    SensorManager sensorManager = wearable.requireCapability<SensorManager>();
-
-    for (Sensor sensor in sensorManager.sensors) {
-      
-      if(configs.containsKey(sensor.sensorName.toLowerCase())) {
         
-        List<SensorConfiguration> configurations = sensor.relatedConfigurations;
-        (sensor as SensorFrequencyConfiguration).setFrequencyBestEffort(configs[sensor.sensorName]!.sampleRate);
-        for (var configuration in configurations) {
-          configuration.setConfiguration(configProvider.getSelectedConfigurationValue(configuration)!);
-        }
-
       }
     }
   }
 
-  
+  SensorFrequencyConfigurationValue? _findBestMatch(
+    List<SensorConfigurationValue> values,
+    SensorConfig experimentSensorConfig,
+  ) {
+    SensorFrequencyConfigurationValue? bestMatch;
+    double minDiff = 1000000;
+    for (var value in values) {
+      if (value is SensorFrequencyConfigurationValue) {
+        double diff =
+            (value.frequencyHz - experimentSensorConfig.sampleRate).abs();
+        if (diff < minDiff) {
+          minDiff = diff;
+          bestMatch = value;
+        }
+        if (minDiff == 0) {
+          break;
+        }
+      }
+    }
+    return bestMatch;
+  }
 
-  void stopRecording () {
+  /// Configure sensors based on global configuration
+  Future<
+      (
+        List<
+            (
+              SensorConfiguration<SensorConfigurationValue>,
+              SensorConfigurationValue
+            )>,
+        List<
+            (
+              SensorConfiguration<SensorConfigurationValue>,
+              SensorConfigurationValue
+            )>
+      )> configureSensors() async {
+    if (leftWearable is! SensorConfigurationManager) {
+      throw Exception(
+        "The left wearable does not support sensor configuration",
+      );
+    }
+    if (rightWearable is! SensorConfigurationManager) {
+      throw Exception(
+        "The right wearable does not support sensor configuration",
+      );
+    }
 
+    // Configure each sensor according to the global configuration
+    for (var sensorConfig in GlobalSensorConfig.globalSensorConfigs) {
+      final sensorName = sensorConfig.sensorName.toLowerCase();
+
+      // Get the sensor ID from the configuration
+      final sensorId = defaultSensorIdMap[sensorName];
+
+      _setConfigProvider(
+        sensorId,
+        leftSensorCfgProvider,
+        _leftSensorIdToCfgMap,
+        sensorConfig,
+      );
+      _setConfigProvider(
+        sensorId,
+        rightSensorCfgProvider,
+        _rightSensorIdToCfgMap,
+        sensorConfig,
+      );
+    }
+
+    var leftSelectedCfgs = leftSensorCfgProvider.getSelectedConfigurations();
+    for (var entry in leftSelectedCfgs) {
+      SensorConfiguration config = entry.$1;
+      SensorConfigurationValue value = entry.$2;
+      config.setConfiguration(value);
+    }
+
+    var rightSelectedCfgs = rightSensorCfgProvider.getSelectedConfigurations();
+    for (var entry in rightSelectedCfgs) {
+      SensorConfiguration config = entry.$1;
+      SensorConfigurationValue value = entry.$2;
+      config.setConfiguration(value);
+    }
+
+    String leftSelectedCfgsString = leftSelectedCfgs.map(
+      (entry) {
+        String name = entry.$1.name;
+        String frequency = entry.$2 is SensorFrequencyConfigurationValue
+            ? "${(entry.$2 as SensorFrequencyConfigurationValue).frequencyHz}Hz"
+            : "configured";
+        return "$name: $frequency";
+      },
+    ).join("; ");
+
+    String rightSelectedCfgsString = rightSelectedCfgs.map(
+      (entry) {
+        String name = entry.$1.name;
+        String frequency = entry.$2 is SensorFrequencyConfigurationValue
+            ? "${(entry.$2 as SensorFrequencyConfigurationValue).frequencyHz}Hz"
+            : "configured";
+        return "$name: $frequency";
+      },
+    ).join("; ");
+
+    print(leftSelectedCfgsString);
+    print(rightSelectedCfgsString);
+
+    return (leftSelectedCfgs, rightSelectedCfgs);
+  }
+
+  String? getSensorId(String sensorName) {
+    final normalizedName = sensorName.toLowerCase();
+    return defaultSensorIdMap[normalizedName];
+  }
+
+  Future<void> turnOffSensors() async{
+    await Future.wait([
+      rightSensorCfgProvider.turnOffAllSensors(),
+      leftSensorCfgProvider.turnOffAllSensors(),
+    ]);
   }
 }

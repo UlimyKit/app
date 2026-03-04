@@ -58,9 +58,9 @@ class RecordingHandler extends ChangeNotifier{
   }
 
   //creates new recording object and sets recording true
-  void startRecording(){
+  Future<void> startRecording() async{
     currentRecording = Recording(userId: userId, startingTime: DateTime.now().toUtc());
-    detector.startRecording(currentRecording!.sessionId, currentRecording!.startingTime, addSymptomDetectionNotification);
+    await detector.configureSensors();
     _recording = true;
     notifyListeners();
   }
@@ -86,17 +86,19 @@ class RecordingHandler extends ChangeNotifier{
   }
 
   //stops recording saves it and clears the ui of symptoms
-  void stopRecording() {
+  void stopRecording() async{
     if (currentRecording != null) {
       currentRecording!.stopRecording();
+      await detector.turnOffSensors();
       _saveRecording();
       _recording = false;
       _currentlyDetectedSymptoms = [];
       _symptomNotifications = [];
       currentRecording = null;
+
       notifyListeners();
     } else {
-      print("stopped recording without starting");
+      print("Stopped recording without starting");
     }
 
   }
@@ -108,7 +110,7 @@ class RecordingHandler extends ChangeNotifier{
     }
     currentRecording!.saveRecording();
   }
-
+  
   bool isRecording(){
     return _recording;
   }

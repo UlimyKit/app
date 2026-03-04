@@ -48,12 +48,11 @@ class Symptoms {
 
 class GlobalSensorConfig {
 
-  static final Map<String, SensorConfig> globalSensorConfigs = {
-  "imu": SensorConfig(sensorName: "imu", sampleRate: 50),
-  "pressure": SensorConfig(sensorName: "pressure", sampleRate: 50),
-  "microphone": SensorConfig(sensorName: "microphone", sampleRate: 48000),
-  "ppg": SensorConfig(sensorName: "ppg", sampleRate: 50),
-  "boneConduction": SensorConfig(sensorName: "boneConduction", sampleRate: 1600),
-  "temperature": SensorConfig(sensorName: "temperature", sampleRate: 8),
-};
+  static final List<SensorConfig> globalSensorConfigs = [
+  SensorConfig(sensorName: "imu", sampleRate: 50),
+  SensorConfig(sensorName: "pressure", sampleRate: 50),
+  SensorConfig(sensorName: "microphone", sampleRate: 48000),
+  SensorConfig(sensorName: "ppg", sampleRate: 50),
+  SensorConfig(sensorName: "boneConduction", sampleRate: 1600),
+  ];
 }

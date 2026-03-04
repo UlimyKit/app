@@ -5,6 +5,12 @@ import 'package:open_wearable/apps/allergy_detection/model/detected_symptom.dart
 import 'package:open_wearable/apps/allergy_detection/model/symptom.dart';
 import 'package:provider/provider.dart';
 
+
+///
+///
+///
+///
+///
 class SessionPage extends StatefulWidget {
   const SessionPage({super.key});
 
@@ -146,7 +152,7 @@ class _SessionPageState extends State<SessionPage> {
                   ),
                   child: const Icon(Icons.add, size: 32),
                 ),
-                ElevatedButton(onPressed: () => context.read<RecordingHandler>().addSymptomNotification(DetectedSymptom(machineLabel: Symptoms.symptomList[0], humanLabel: Symptoms.symptomList[0],detectionEndTime: DateTime.now())), child: Icon(Icons.ac_unit)),
+                ElevatedButton(onPressed: () => context.read<RecordingHandler>().addSymptomDetectionNotification(DetectedSymptom(machineLabel: Symptoms.symptomList[0], humanLabel: Symptoms.symptomList[0],detectionEndTime: DateTime.now())), child: Icon(Icons.ac_unit)),
               ],
             )
           )
