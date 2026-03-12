@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 
 ///
-///
+/// Page wich starts and stops the session
 ///
 ///
 ///
@@ -19,11 +19,14 @@ class SessionPage extends StatefulWidget {
 }
 
 class _SessionPageState extends State<SessionPage> {
+  // TODO: place stopwatch somewhere
   var stopwatch = Stopwatch();
   
   @override
   Widget build(BuildContext context) {
+    //confirmed Symptoms to put in the listview
     List<DetectedSymptom> detectedSymptoms = context.watch<RecordingHandler>().getDetectedSymptoms();
+    //symptoms detected by symptomdetector to be confirmed by user
     List<DetectedSymptom> symptomNotifications = context.watch<RecordingHandler>().getSymptomNotifications();
     bool recording = context.watch<RecordingHandler>().isRecording();
     return Scaffold(
@@ -38,6 +41,7 @@ class _SessionPageState extends State<SessionPage> {
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                       ),
+                      //stack to have the notification list view over the detected symptoms listview
                       child: Stack(
                         children: [
                           ListView.builder(
@@ -61,6 +65,7 @@ class _SessionPageState extends State<SessionPage> {
                                 );
                              },
                           ),
+                          //if there are no unconfirmed symptoms for the user dont show second listview on stack
                           if (symptomNotifications.isNotEmpty)
                           ListView.builder(
                             itemCount: symptomNotifications.length,
@@ -152,6 +157,7 @@ class _SessionPageState extends State<SessionPage> {
                   ),
                   child: const Icon(Icons.add, size: 32),
                 ),
+                //testbutton to push notifications while algorithm is not implemented
                 ElevatedButton(onPressed: () => context.read<RecordingHandler>().addSymptomDetectionNotification(DetectedSymptom(machineLabel: Symptoms.symptomList[0], humanLabel: Symptoms.symptomList[0],detectionEndTime: DateTime.now())), child: Icon(Icons.ac_unit)),
               ],
             )
@@ -174,8 +180,8 @@ class _SessionPageState extends State<SessionPage> {
     context.read<RecordingHandler>().stopRecording();
   }
 
-  void _startRecordingSession(){
-    context.read<RecordingHandler>().startRecording();
+  void _startRecordingSession() async{
+    await context.read<RecordingHandler>().startRecording();
   }
 
   Future<void> _pressedPlayButton() async {
@@ -297,6 +303,9 @@ class _SessionPageState extends State<SessionPage> {
   );
   }
 
+  /* Creates dialog to add a symptom
+    inputs current time in the end_detection_time component of the symptom
+  */
   Future<void> _showAddSymptomDialog() async {
   Symptom? selectedSymptom;
   DateTime selectedTime = DateTime.now();
